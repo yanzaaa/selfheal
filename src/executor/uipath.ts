@@ -1,5 +1,5 @@
 import type { Executor } from "./index";
-import type { TestCase, TestResult } from "../types";
+import type { TestCase, TestResult, RunReport } from "../types";
 import { PlaywrightExecutor } from "./playwright";
 
 /**
@@ -117,13 +117,26 @@ class UiPathClient {
     return (r?.id ?? r?.data?.id) as string;
   }
 
-  /** Open a test-case log for the execution, then finish it with a result. */
-  async logResult(pid: string, executionId: string, testCaseId: string, passed: boolean, detail: string): Promise<void> {
-    await this.tm(`/api/v2/${pid}/testcaselogs`, { method: "POST", body: JSON.stringify({ testCaseId, testExecutionId: executionId }) });
+  /** Open a test-case log for the execution; returns its id. */
+  async openLog(pid: string, executionId: string, testCaseId: string): Promise<string> {
+    const r = await this.tm(`/api/v2/${pid}/testcaselogs`, { method: "POST", body: JSON.stringify({ testCaseId, testExecutionId: executionId }) });
+    return (r?.id ?? r?.data?.id) as string;
+  }
+
+  async finishLog(pid: string, executionId: string, testCaseId: string, passed: boolean, detail: string): Promise<void> {
     await this.tm(`/api/v2/${pid}/testcaselogs/testexecution/${executionId}/finish`, {
       method: "POST",
       body: JSON.stringify({ testCaseId, result: passed ? "Passed" : "Failed", hasError: !passed, executedBy: "SelfHeal QA", detailLink: detail }),
     });
+  }
+
+  /** File a defect from a failing test-case log — the "real bug" path. */
+  async createDefect(pid: string, executionId: string, testCaseId: string, logId: string): Promise<string | undefined> {
+    const r = await this.tm(`/api/v2/${pid}/defects`, {
+      method: "POST",
+      body: JSON.stringify({ testExecutionId: executionId, testCaseId, linkToTestCaseLog: logId }),
+    });
+    return (r?.id ?? r?.data?.id) as string | undefined;
   }
 }
 
@@ -144,32 +157,37 @@ export class UiPathExecutor implements Executor {
       this.verified = true;
     }
 
-    const result = await this.pw.run(test); // real execution
-    await this.report(test, result); // orchestration / record layer
-    return result;
+    return this.pw.run(test); // real execution; final outcome reported once via reportRun()
   }
 
   /**
-   * Report the run into UiPath Test Manager so the project dashboard reflects
-   * the agent's activity (pass/fail + self-heals). Best-effort: never breaks the
-   * run. Finalize the exact endpoint/payload from your tenant Swagger.
+   * Report the FINAL agent outcome into UiPath Test Manager: test case + test set
+   * + execution + result, plus self-heal context. When the agent classified a
+   * failure as a REAL BUG, auto-file a linked defect — the key differentiator vs.
+   * blind self-healing, which would silently mask that regression.
+   * Best-effort: never breaks the run.
    */
-  private async report(test: TestCase, result: TestResult): Promise<void> {
+  async reportRun(report: RunReport): Promise<void> {
     if (process.env.UIPATH_REPORT !== "1") {
-      console.log(`📋 UiPath: report skipped (set UIPATH_REPORT=1 to push "${test.name}" → ${result.status} into project ${this.cfg.project}).`);
+      console.log(`📋 UiPath: report skipped (set UIPATH_REPORT=1 to push "${report.testName}" → ${report.finalStatus} into project ${this.cfg.project}).`);
       return;
     }
     try {
       const pid = await this.client.resolveProjectId(this.cfg.project);
-      const testCaseId = await this.client.createTestCase(
-        pid,
-        test.name,
-        `Authored by SelfHeal QA from ${test.url} — ${result.steps.length} steps.`,
-      );
-      const testSetId = await this.client.createTestSet(pid, `${test.name} (SelfHeal QA)`);
-      const executionId = await this.client.createExecution(pid, testSetId, `${test.name} (SelfHeal QA)`, [testCaseId]);
-      await this.client.logResult(pid, executionId, testCaseId, result.status === "pass", `SelfHeal QA result: ${result.status}`);
-      console.log(`📤 UiPath: reported "${test.name}" → ${result.status} into Test Manager (execution ${executionId}).`);
+      const passed = report.finalStatus === "pass";
+      const heals = report.heals.map((h) => `${h.originalSelector}→${h.suggestedSelector}`).join(", ");
+      const desc = `Authored by SelfHeal QA from ${report.url}` + (heals ? ` | self-heals: ${heals}` : "");
+      const testCaseId = await this.client.createTestCase(pid, report.testName, desc);
+      const testSetId = await this.client.createTestSet(pid, `${report.testName} (SelfHeal QA)`);
+      const executionId = await this.client.createExecution(pid, testSetId, `${report.testName} (SelfHeal QA)`, [testCaseId]);
+      const logId = await this.client.openLog(pid, executionId, testCaseId);
+      await this.client.finishLog(pid, executionId, testCaseId, passed, `SelfHeal QA: ${report.finalStatus}, ${report.heals.length} heal(s), ${report.bugs.length} bug(s)`);
+      console.log(`📤 UiPath: reported "${report.testName}" → ${report.finalStatus} (execution ${executionId}, ${report.heals.length} self-heal(s)).`);
+
+      if (report.bugs.length > 0 && logId) {
+        const defectId = await this.client.createDefect(pid, executionId, testCaseId, logId);
+        console.log(`🐞 UiPath: filed a defect for the real bug — "${report.bugs[0].description}"${defectId ? ` (defect ${defectId})` : ""}. Blind self-healing would have masked this regression.`);
+      }
     } catch (e) {
       console.log(`⚠️  UiPath report failed (run still valid locally): ${String(e).slice(0, 260)}`);
     }

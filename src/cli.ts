@@ -65,6 +65,7 @@ async function main(): Promise<void> {
           : new PlaywrightExecutor({ headless: !process.argv.includes("--headed") });
     console.log(`🧪 SelfHeal QA — provider=${llm.name} executor=${kind}\n`);
     const report = await runAgent({ llm, executor, spec, url, onEvent: (m) => console.log(m) });
+    await executor.reportRun?.(report);
     await executor.close();
     printReport(report);
     process.exit(report.finalStatus === "pass" ? 0 : 1);

@@ -1,4 +1,4 @@
-import type { TestCase, TestResult } from "../types";
+import type { TestCase, TestResult, RunReport } from "../types";
 
 /**
  * An Executor runs a TestCase and reports per-step results. On failure it
@@ -13,4 +13,6 @@ import type { TestCase, TestResult } from "../types";
 export interface Executor {
   run(test: TestCase): Promise<TestResult>;
   close(): Promise<void>;
+  /** Optional: report the final agent outcome to an external system (e.g. UiPath Test Manager). */
+  reportRun?(report: RunReport): Promise<void>;
 }
