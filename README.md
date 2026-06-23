@@ -1,59 +1,59 @@
-# SelfHeal QA — the test agent that fixes its own tests
+# SelfHeal QA — the test agent that knows when *not* to heal
 
-**Brittle UI tests are the #1 reason teams abandon automation.** A button id changes, a class gets renamed, and overnight your green suite turns red — even though the product works fine. Engineers then waste hours triaging "is this a real bug, or just a flaky locator?"
+> **UiPath AgentHack · Test Cloud track · built end-to-end with Claude Code.**
 
-**SelfHeal QA is an AI agent that does that triage — and the fix — for you.** Give it a URL and a plain-English acceptance spec. It writes the test, runs it, and when a step fails it decides: **real bug** → file it, or **brittle selector** → rewrite the locator and re-run, automatically.
+Brittle UI tests are the #1 reason teams abandon test automation. Self-healing fixes broken locators automatically — but it has a dangerous blind spot: **it can heal right past a real bug and ship the regression.**
+
+**SelfHeal QA is a UiPath coded agent that heals brittle locators *and knows when not to*.** Give it a URL and a plain-English spec. It generates the test, runs it, and on failure **triages the root cause** — `BRITTLE_SELECTOR` vs `REAL_BUG`. Brittle? It rewrites the locator from the live DOM and re-runs. Real bug? It **refuses to heal** and **files a defect in UiPath Test Manager** instead of masking it.
 
 ```
-spec ─▶ [generate test] ─▶ [run] ─▶ pass ✅
-                              │
-                            fail ❌
-                              ▼
-                        [diagnose] ──▶ REAL_BUG  ─▶ file bug 🐞
-                              │
-                       BRITTLE_SELECTOR
-                              ▼
-                   [rewrite locator] ─▶ re-run ↺
+spec ─▶ generate ─▶ run ─▶ pass ✅
+                      │
+                    fail ❌ ─▶ triage (LLM)
+                                 ├─ BRITTLE_SELECTOR ─▶ rewrite locator ─▶ re-run ↺
+                                 └─ REAL_BUG ─────────▶ file defect in Test Manager 🐞
 ```
 
-## Why it's different
+## Why it's different from UiPath Autopilot
+Autopilot for Testers self-heals. SelfHeal QA's novelty is **restraint**: it withholds healing when the failure is a genuine regression and turns that judgment into an auto-filed Test Manager defect — directly attacking the biggest risk of autonomous QA: **silent regressions masked by over-eager healing.**
 
-- **It heals, it doesn't just flag.** Most tools detect flakiness; this one rewrites the broken locator from the live page's elements and proves the fix by re-running.
-- **Bug vs. brittleness is the hard call** — and it's exactly where an LLM agent beats a static rule. SelfHeal reasons over the failure + the current DOM to make that judgment with a confidence score.
-- **Pluggable execution.** The same agent brain runs on a mock (no browser), on Playwright, or orchestrated through **UiPath Test Cloud** — swap the `Executor`, nothing else changes.
-
-## Quickstart (30 seconds, no API key)
+## Runs through the UiPath Platform
+The orchestration is a **UiPath coded agent** (`uipath-agent/`, Python `uipath` SDK): `generate → run → triage → heal/file-defect → report`. It runs via the UiPath runtime and packages to Orchestrator.
 
 ```bash
-npm install
-npm run demo
+cd uipath-agent
+.venv/bin/uipath run main '{"url":"https://demo.local/login","spec":"login and see Welcome back","inject_bug":true}'
+# → self-heals the selector, catches the real bug, files a defect in Test Manager
 ```
 
-The demo simulates an app whose login button id was renamed `#login-btn → #sign-in-btn`. Watch the agent fail, diagnose it as a brittle selector, rewrite it, and pass on the next run.
+## UiPath components used
+- **Coded Agents** (Automation Cloud / Orchestrator) — orchestration + agent logic on the platform
+- **Test Manager** v2 — test cases, test sets, executions, test-case logs, **defects**
+- **Identity** — external-application client-credentials auth
+- **UiPath for Coding Agents** — built entirely with **Claude Code**
 
-## Run against a real app
+## Live browser demo (companion Playwright executor)
+A TypeScript executor drives a real Chromium so you can watch the heal happen on an actual page:
 
 ```bash
-cp .env.example .env          # set LLM_PROVIDER + your key
-npm run pw:install            # one-time: install Chromium
-npm run run -- \
-  --url "https://your-app.com/login" \
-  --spec "A returning user can log in and see the welcome message." \
-  --executor playwright --headed
+npm install && npm run pw:install
+cp .env.example .env          # set ANTHROPIC + UiPath creds
+npm run run -- --url "file://$PWD/demo/buggy-app/index.html" \
+  --spec "A returning user logs in and sees Welcome back" \
+  --executor uipath --headed   # heals live + reports to Test Manager
 ```
+Add `?bug=1` to the URL to see the agent correctly **file a defect** instead of healing.
 
-Try the bundled demo app (`demo/buggy-app/index.html`): serve it, point `--url` at it, and add `?bug=1` to see the agent correctly classify a **real bug** instead of self-healing.
+Key-free demo (no API keys, mock execution): `npm run demo`.
 
 ## How it works
-
-| Piece | File | Job |
+| Piece | Where | Job |
 |---|---|---|
-| Test author | `src/testgen.ts` | spec → structured `TestCase` |
-| Agent loop | `src/agent.ts` | run → diagnose → heal/report → repeat |
-| Healer | `src/heal.ts` | classify failure, rewrite locator |
-| LLM layer | `src/llm.ts` | mock / Anthropic / OpenAI (provider-agnostic) |
-| Executors | `src/executor/*` | Mock · Playwright · (UiPath Test Cloud) |
+| Coded agent | `uipath-agent/main.py` | orchestration brain on UiPath: generate → run → triage → report |
+| LLM triage | Claude (Anthropic) | bug-vs-brittleness + selector rewrite, with deterministic fallback |
+| Test Manager client | `uipath-agent/main.py`, `src/executor/uipath.ts` | cases / sets / executions / logs / **defects** |
+| Playwright executor | `src/executor/playwright.ts` | real-browser execution for the live demo |
+| Agent loop / healer | `src/agent.ts`, `src/heal.ts` | self-heal loop + triage |
 
 ## License
-
 MIT © 2026 Anthony Yanza
