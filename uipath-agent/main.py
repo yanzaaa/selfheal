@@ -324,8 +324,16 @@ def main(input: SelfHealIn) -> SelfHealOut:
     if os.environ.get("UIPATH_REPORT", "1") == "1":
         try:
             pid = _project_id()
-            heal_txt = ", ".join(f"{h['from']}->{h['to']}" for h in heals)
-            desc = f"Authored by SelfHeal QA coded agent from {input.url}" + (f" | self-heals: {heal_txt}" if heal_txt else "")
+            heal_txt = ", ".join(f"{h['from']}->{h['to']} ({int(h['confidence'] * 100)}%{', FLAGGED for review' if h.get('flagged_for_review') else ''})" for h in heals)
+            bug_txt = "; ".join(f"{b['reasoning']} ({int(b['confidence'] * 100)}% confidence)" for b in bugs)
+            parts = [f"Authored by SelfHeal QA coded agent from {input.url}."]
+            if selection_summary:
+                parts.append(f"Risk-based selection: {selection_summary}.")
+            if heal_txt:
+                parts.append(f"Self-healed brittle locators: {heal_txt}.")
+            if bug_txt:
+                parts.append(f"REAL BUG — refused to heal (blind self-healing would have masked this regression): {bug_txt}")
+            desc = " ".join(parts)
             tc = _tm("POST", f"/api/v2/{pid}/testcases", {"name": test["name"], "description": desc, "projectId": pid})
             tcid = tc["id"]
             ts = _tm("POST", f"/api/v2/{pid}/testsets", {"name": f"{test['name']} (SelfHeal QA)", "projectId": pid})

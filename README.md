@@ -18,7 +18,7 @@ spec ─▶ generate ─▶ run ─▶ pass ✅
 Autopilot for Testers self-heals. SelfHeal QA's novelty is **restraint**: it withholds healing when the failure is a genuine regression and turns that judgment into an auto-filed Test Manager defect — directly attacking the biggest risk of autonomous QA: **silent regressions masked by over-eager healing.**
 
 ## Runs through the UiPath Platform
-The orchestration is a **UiPath coded agent** (`uipath-agent/`, Python `uipath` SDK): `generate → run → triage → heal/file-defect → report`. It runs via the UiPath runtime and packages to Orchestrator.
+The orchestration is a **UiPath coded agent** (`uipath-agent/`, Python `uipath` SDK): `select → generate → run → triage → heal/file-defect → report`. It runs via the UiPath runtime and is **published to the Orchestrator tenant feed** (`uipath pack` + `uipath publish --tenant`).
 
 ```bash
 cd uipath-agent

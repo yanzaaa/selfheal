@@ -24,7 +24,7 @@ Give it a target app and a plain-English acceptance spec. SelfHeal QA:
 The whole loop runs as a **UiPath coded agent** (orchestration on the UiPath Platform), writing test cases, test sets, executions, results, and defects into Test Manager.
 
 ## How it works (architecture)
-- **UiPath Coded Agent (Python, `uipath` SDK)** — the orchestration brain. `generate → run → triage → heal/file-defect → report`. Runs via the UiPath runtime (`uipath run`) and packages to Orchestrator (`uipath pack`).
+- **UiPath Coded Agent (Python, `uipath` SDK)** — the orchestration brain. `select → generate → run → triage → heal/file-defect → report`. Runs via the UiPath runtime (`uipath run`) and is **published to the Orchestrator tenant feed** (`uipath pack` + `uipath publish --tenant`) — deployed, not just runnable.
 - **LLM triage** — Anthropic Claude decides bug-vs-brittleness and proposes the corrected selector from the page's live elements (with a deterministic fallback).
 - **UiPath Test Manager (v2 API)** — system of record: creates test cases, test sets, executions, test-case logs (pass/fail), and **defects** (`CreateDefectFromTestCaseLog`).
 - **Companion Playwright executor (TypeScript)** — drives a real browser for the live demo, showing the heal happening on an actual page.
@@ -62,7 +62,7 @@ The one question that kills a self-healing pitch is *"how do we know it doesn't 
 A working coded agent that, in one run, self-heals a brittle locator **and** files a real defect — verified live in Test Manager (executions + defects created by the agent).
 
 ## What's next
-Deploy to Orchestrator as a scheduled process; wire the Playwright execution as a UiPath UI-automation tool; expand triage to flaky-vs-environmental classification.
+Schedule the deployed Orchestrator process as a pre-merge CI/CD gate; wire Playwright execution as a UiPath UI-automation tool; expand triage to a flaky-vs-environmental class.
 
 ## Links
 - Repo: https://github.com/yanzaaa/selfheal
