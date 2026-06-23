@@ -2,6 +2,7 @@ import { runAgent } from "./agent";
 import { createLLM, MockLLM } from "./llm";
 import { MockExecutor } from "./executor/mock";
 import { PlaywrightExecutor } from "./executor/playwright";
+import { UiPathExecutor } from "./executor/uipath";
 import type { Executor } from "./executor/index";
 import type { RunReport } from "./types";
 
@@ -51,13 +52,17 @@ async function main(): Promise<void> {
     const url = flag("url");
     const spec = flag("spec");
     if (!url || !spec) {
-      console.error('Usage: npm run run -- --url <url> --spec "<acceptance spec>" [--executor playwright|mock] [--headed]');
+      console.error('Usage: npm run run -- --url <url> --spec "<acceptance spec>" [--executor playwright|mock|uipath] [--headed]');
       process.exit(2);
     }
     const llm = createLLM();
     const kind = flag("executor", "playwright");
     const executor: Executor =
-      kind === "mock" ? new MockExecutor() : new PlaywrightExecutor({ headless: !process.argv.includes("--headed") });
+      kind === "mock"
+        ? new MockExecutor()
+        : kind === "uipath"
+          ? new UiPathExecutor()
+          : new PlaywrightExecutor({ headless: !process.argv.includes("--headed") });
     console.log(`🧪 SelfHeal QA — provider=${llm.name} executor=${kind}\n`);
     const report = await runAgent({ llm, executor, spec, url, onEvent: (m) => console.log(m) });
     await executor.close();
