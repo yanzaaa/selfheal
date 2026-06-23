@@ -1,0 +1,190 @@
+{
+    "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+    "$id": "entry-points.json",
+    "entryPoints": [
+        {
+            "filePath": "main",
+            "uniqueId": "2d761780-3d5e-4a35-be21-43cd324166eb",
+            "type": "function",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string"
+                    },
+                    "spec": {
+                        "type": "string"
+                    },
+                    "inject_bug": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "url",
+                    "spec"
+                ]
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string"
+                    },
+                    "runs": {
+                        "type": "integer"
+                    },
+                    "heals": {
+                        "type": "integer"
+                    },
+                    "bugs": {
+                        "type": "integer"
+                    },
+                    "execution_id": {
+                        "type": "string"
+                    },
+                    "defect_id": {
+                        "type": "string"
+                    },
+                    "timeline": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "status",
+                    "runs",
+                    "heals",
+                    "bugs"
+                ]
+            },
+            "graph": {
+                "nodes": [
+                    {
+                        "id": "main.py:280",
+                        "name": "main",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:128",
+                        "name": "generate_test",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:151",
+                        "name": "run_test",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:196",
+                        "name": "triage",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:60",
+                        "name": "_request",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:116",
+                        "name": "_project_id",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:101",
+                        "name": "_tm",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:92",
+                        "name": "_get_token",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    }
+                ],
+                "edges": [
+                    {
+                        "source": "main.py:280",
+                        "target": "main.py:128"
+                    },
+                    {
+                        "source": "main.py:280",
+                        "target": "main.py:151"
+                    },
+                    {
+                        "source": "main.py:196",
+                        "target": "main.py:60"
+                    },
+                    {
+                        "source": "main.py:280",
+                        "target": "main.py:196"
+                    },
+                    {
+                        "source": "main.py:101",
+                        "target": "main.py:60"
+                    },
+                    {
+                        "source": "main.py:101",
+                        "target": "main.py:92"
+                    },
+                    {
+                        "source": "main.py:116",
+                        "target": "main.py:101"
+                    },
+                    {
+                        "source": "main.py:280",
+                        "target": "main.py:116"
+                    },
+                    {
+                        "source": "main.py:280",
+                        "target": "main.py:101"
+                    },
+                    {
+                        "source": "main.py:280",
+                        "target": "main.py:101"
+                    },
+                    {
+                        "source": "main.py:280",
+                        "target": "main.py:101"
+                    },
+                    {
+                        "source": "main.py:280",
+                        "target": "main.py:101"
+                    },
+                    {
+                        "source": "main.py:280",
+                        "target": "main.py:101"
+                    },
+                    {
+                        "source": "main.py:280",
+                        "target": "main.py:101"
+                    }
+                ]
+            }
+        }
+    ]
+}

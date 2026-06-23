@@ -5,3 +5,8 @@ dist/
 .DS_Store
 playwright-report/
 test-results/
+.venv/
+__pycache__/
+*.pyc
+*.nupkg
+.uipath/
