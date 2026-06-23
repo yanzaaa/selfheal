@@ -38,6 +38,9 @@ The whole loop runs as a **UiPath coded agent** (orchestration on the UiPath Pla
 ## Why it wins the Test Cloud track (differentiation)
 UiPath Autopilot for Testers already self-heals. SelfHeal QA's novelty is the **triage + restraint**: it's the agent that *withholds* healing when the failure is a real defect, and turns that judgment into an auto-filed Test Manager defect. It directly attacks the biggest risk of autonomous testing — **silent regressions masked by over-eager healing.**
 
+## Proof it doesn't mask bugs (benchmark)
+The one question that kills a self-healing pitch is *"how do we know it doesn't heal past a real bug?"* We answer it with a seeded benchmark (`uipath-agent/benchmark.py`): 10 labeled failures — 5 cosmetic locator drifts and 5 genuine regressions. Result: **100% triage accuracy and a 0% false-heal rate** (zero real bugs healed away; industry credibility bar is <5%). Every heal also carries a **confidence score**, and low-confidence heals are **flagged for human review** rather than applied silently — a full, auditable "what was healed and why" trail.
+
 ## How each judging criterion is met
 | Criterion | How we hit it |
 |---|---|

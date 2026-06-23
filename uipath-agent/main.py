@@ -226,6 +226,7 @@ class SelfHealOut:
     status: str
     runs: int
     heals: int
+    flagged_heals: int
     bugs: int
     execution_id: str | None = None
     defect_id: str | None = None
@@ -255,15 +256,20 @@ def main(input: SelfHealIn) -> SelfHealOut:
             timeline.append("Heal budget exhausted")
             break
         d = triage(f)
-        timeline.append(f"Triage: {d['verdict']} — {d.get('reasoning','')[:80]}")
+        conf = float(d.get("confidence", 0.0))
+        timeline.append(f"Triage: {d['verdict']} ({int(conf * 100)}%) — {d.get('reasoning', '')[:80]}")
         if d["verdict"] == "BRITTLE_SELECTOR" and d.get("suggestedSelector"):
             step = next(s for s in test["steps"] if s["id"] == f["step"]["id"])
-            heals.append({"from": step.get("selector"), "to": d["suggestedSelector"]})
-            timeline.append(f"Self-healed: {step.get('selector')} -> {d['suggestedSelector']}")
+            low = conf < 0.7  # low-confidence heals are applied but flagged for human review
+            heals.append({"from": step.get("selector"), "to": d["suggestedSelector"], "confidence": conf, "flagged_for_review": low})
+            timeline.append(
+                f"Self-healed: {step.get('selector')} -> {d['suggestedSelector']}"
+                + (" [LOW CONFIDENCE — flagged for human review]" if low else "")
+            )
             step["selector"] = d["suggestedSelector"]
             continue
-        bugs.append({"step": f["step"]["id"], "reasoning": d.get("reasoning", "")})
-        timeline.append("Real bug detected — will file a defect")
+        bugs.append({"step": f["step"]["id"], "reasoning": d.get("reasoning", ""), "confidence": conf})
+        timeline.append(f"Real bug ({int(conf * 100)}%) — refusing to heal; filing a defect (blind healing would mask this)")
         break
 
     # Report through UiPath Test Manager
@@ -292,6 +298,7 @@ def main(input: SelfHealIn) -> SelfHealOut:
         status=final,
         runs=attempts,
         heals=len(heals),
+        flagged_heals=sum(1 for h in heals if h.get("flagged_for_review")),
         bugs=len(bugs),
         execution_id=execution_id,
         defect_id=defect_id,

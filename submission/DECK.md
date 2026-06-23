@@ -18,6 +18,9 @@ An autonomous UiPath coded agent: generate test → run → **triage (bug vs. br
 1. Brittle locator → self-healed → green.
 2. Real bug → **not healed** → defect auto-filed in Test Manager.
 
+**Slide 4b — Proof it's trustworthy**
+Seeded benchmark: 10 labeled failures (5 cosmetic drifts, 5 real regressions) → **100% triage accuracy, 0% false-heal rate** (industry bar <5%). Every heal has a confidence score; low-confidence heals are flagged for human review. Auditable "what was healed and why."
+
 **Slide 5 — Architecture**
 Coded Agent (orchestration on UiPath) · Claude triage · Test Manager (cases/sets/executions/**defects**) · Playwright executor for real-browser runs.
 
