@@ -212,6 +212,45 @@ def triage(failure: dict) -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# Risk-based test selection — a proactive, pre-execution agentic decision      #
+# --------------------------------------------------------------------------- #
+TEST_CATALOG = [
+    {"name": "Login flow", "tags": ["auth", "login", "session", "signin"]},
+    {"name": "Checkout & payment", "tags": ["checkout", "payment", "cart", "order"]},
+    {"name": "Search results", "tags": ["search", "catalog", "query"]},
+    {"name": "Profile update", "tags": ["profile", "account", "settings"]},
+]
+
+
+def select_tests(changed_files: list[str]) -> list[str]:
+    """Given a changeset, choose which suite tests it can affect (Claude, with a
+    tag-match fallback) — so the agent runs the relevant slice, not the whole suite."""
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if key:
+        try:
+            system = (
+                "You are a risk-based test selector. Given changed files and a test catalog "
+                "(name + tags), return ONLY a JSON array of the test NAMES whose behavior the "
+                "change could plausibly affect. Be precise — omit unrelated tests."
+            )
+            user = "Changed files:\n" + "\n".join(changed_files) + "\n\nCatalog:\n" + json.dumps(TEST_CATALOG)
+            _, j = _request(
+                "POST", "https://api.anthropic.com/v1/messages",
+                {"content-type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01"},
+                json.dumps({"model": os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6"), "max_tokens": 300, "system": system, "messages": [{"role": "user", "content": user}]}).encode(),
+            )
+            text = j["content"][0]["text"] if isinstance(j, dict) else ""
+            a, b = text.find("["), text.rfind("]")
+            if a != -1 and b != -1:
+                names = json.loads(text[a : b + 1])
+                return [n for n in names if any(t["name"] == n for t in TEST_CATALOG)]
+        except Exception:
+            pass
+    blob = " ".join(changed_files).lower()
+    return [t["name"] for t in TEST_CATALOG if any(tag in blob for tag in t["tags"])]
+
+
+# --------------------------------------------------------------------------- #
 # UiPath coded-agent entrypoint                                               #
 # --------------------------------------------------------------------------- #
 @dataclass
@@ -219,6 +258,7 @@ class SelfHealIn:
     url: str
     spec: str
     inject_bug: bool | None = False
+    changed_files: list[str] | None = None
 
 
 @dataclass
@@ -230,6 +270,7 @@ class SelfHealOut:
     bugs: int
     execution_id: str | None = None
     defect_id: str | None = None
+    selection: str | None = None
     timeline: list[str] = field(default_factory=list)
 
 
@@ -237,6 +278,12 @@ def main(input: SelfHealIn) -> SelfHealOut:
     timeline: list[str] = []
     heals: list[dict] = []
     bugs: list[dict] = []
+
+    selection_summary = None
+    if input.changed_files:
+        selected = select_tests(input.changed_files)
+        selection_summary = f"{len(selected)}/{len(TEST_CATALOG)} tests selected: {', '.join(selected) or '(none)'}"
+        timeline.append(f"Risk-based selection — changeset affects {len(selected)} of {len(TEST_CATALOG)} suites: {', '.join(selected) or '(none)'}")
 
     test = generate_test(input.spec, input.url)
     timeline.append(f"Generated test '{test['name']}' ({len(test['steps'])} steps)")
@@ -302,5 +349,6 @@ def main(input: SelfHealIn) -> SelfHealOut:
         bugs=len(bugs),
         execution_id=execution_id,
         defect_id=defect_id,
+        selection=selection_summary,
         timeline=timeline,
     )

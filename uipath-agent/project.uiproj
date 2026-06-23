@@ -1,6 +1,6 @@
 {
   "ProjectType": "Function",
-  "Name": "sample",
-  "Description": "sample",
+  "Name": "selfheal-qa-agent",
+  "Description": "SelfHeal QA \u2014 AI test agent that self-heals brittle locators and files real regressions as defects in UiPath Test Manager",
   "MainFile": null
 }

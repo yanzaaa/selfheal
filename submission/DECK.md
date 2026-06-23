@@ -12,7 +12,7 @@ Track: UiPath Test Cloud · Built with Claude Code · github.com/yanzaaa/selfhea
 - QA needs healing *with judgment*.
 
 **Slide 3 — The solution**
-An autonomous UiPath coded agent: generate test → run → **triage (bug vs. brittle)** → heal *or* file a defect → report. Healing where safe, alarms where it matters.
+An autonomous UiPath coded agent that makes **two agentic decisions**: (proactive) **risk-based selection** — run only the tests a changeset affects; then (reactive) **triage on failure** — heal brittle locators, but **file a defect** on real bugs. Healing where safe, alarms where it matters.
 
 **Slide 4 — Live demo (GIF/screens)**
 1. Brittle locator → self-healed → green.

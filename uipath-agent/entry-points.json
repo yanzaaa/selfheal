@@ -4,7 +4,7 @@
     "entryPoints": [
         {
             "filePath": "main",
-            "uniqueId": "2d761780-3d5e-4a35-be21-43cd324166eb",
+            "uniqueId": "62eb79a9-441b-4618-85fc-93b11f2f5f55",
             "type": "function",
             "input": {
                 "type": "object",
@@ -17,6 +17,12 @@
                     },
                     "inject_bug": {
                         "type": "boolean"
+                    },
+                    "changed_files": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
                     }
                 },
                 "required": [
@@ -36,6 +42,9 @@
                     "heals": {
                         "type": "integer"
                     },
+                    "flagged_heals": {
+                        "type": "integer"
+                    },
                     "bugs": {
                         "type": "integer"
                     },
@@ -43,6 +52,9 @@
                         "type": "string"
                     },
                     "defect_id": {
+                        "type": "string"
+                    },
+                    "selection": {
                         "type": "string"
                     },
                     "timeline": {
@@ -56,13 +68,14 @@
                     "status",
                     "runs",
                     "heals",
+                    "flagged_heals",
                     "bugs"
                 ]
             },
             "graph": {
                 "nodes": [
                     {
-                        "id": "main.py:280",
+                        "id": "main.py:344",
                         "name": "main",
                         "type": "function",
                         "metadata": {
@@ -70,7 +83,7 @@
                         }
                     },
                     {
-                        "id": "main.py:128",
+                        "id": "main.py:132",
                         "name": "generate_test",
                         "type": "function",
                         "metadata": {
@@ -78,23 +91,15 @@
                         }
                     },
                     {
-                        "id": "main.py:151",
-                        "name": "run_test",
+                        "id": "main.py:250",
+                        "name": "select_tests",
                         "type": "function",
                         "metadata": {
                             "file": "main.py"
                         }
                     },
                     {
-                        "id": "main.py:196",
-                        "name": "triage",
-                        "type": "function",
-                        "metadata": {
-                            "file": "main.py"
-                        }
-                    },
-                    {
-                        "id": "main.py:60",
+                        "id": "main.py:64",
                         "name": "_request",
                         "type": "function",
                         "metadata": {
@@ -102,7 +107,31 @@
                         }
                     },
                     {
-                        "id": "main.py:116",
+                        "id": "main.py:162",
+                        "name": "run_test",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:151",
+                        "name": "selector_present",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:207",
+                        "name": "triage",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:120",
                         "name": "_project_id",
                         "type": "function",
                         "metadata": {
@@ -110,7 +139,7 @@
                         }
                     },
                     {
-                        "id": "main.py:101",
+                        "id": "main.py:105",
                         "name": "_tm",
                         "type": "function",
                         "metadata": {
@@ -118,7 +147,7 @@
                         }
                     },
                     {
-                        "id": "main.py:92",
+                        "id": "main.py:96",
                         "name": "_get_token",
                         "type": "function",
                         "metadata": {
@@ -128,60 +157,76 @@
                 ],
                 "edges": [
                     {
-                        "source": "main.py:280",
-                        "target": "main.py:128"
+                        "source": "main.py:344",
+                        "target": "main.py:132"
                     },
                     {
-                        "source": "main.py:280",
+                        "source": "main.py:250",
+                        "target": "main.py:64"
+                    },
+                    {
+                        "source": "main.py:344",
+                        "target": "main.py:250"
+                    },
+                    {
+                        "source": "main.py:162",
                         "target": "main.py:151"
                     },
                     {
-                        "source": "main.py:196",
-                        "target": "main.py:60"
+                        "source": "main.py:162",
+                        "target": "main.py:151"
                     },
                     {
-                        "source": "main.py:280",
-                        "target": "main.py:196"
+                        "source": "main.py:344",
+                        "target": "main.py:162"
                     },
                     {
-                        "source": "main.py:101",
-                        "target": "main.py:60"
+                        "source": "main.py:207",
+                        "target": "main.py:64"
                     },
                     {
-                        "source": "main.py:101",
-                        "target": "main.py:92"
+                        "source": "main.py:344",
+                        "target": "main.py:207"
                     },
                     {
-                        "source": "main.py:116",
-                        "target": "main.py:101"
+                        "source": "main.py:105",
+                        "target": "main.py:64"
                     },
                     {
-                        "source": "main.py:280",
-                        "target": "main.py:116"
+                        "source": "main.py:105",
+                        "target": "main.py:96"
                     },
                     {
-                        "source": "main.py:280",
-                        "target": "main.py:101"
+                        "source": "main.py:120",
+                        "target": "main.py:105"
                     },
                     {
-                        "source": "main.py:280",
-                        "target": "main.py:101"
+                        "source": "main.py:344",
+                        "target": "main.py:120"
                     },
                     {
-                        "source": "main.py:280",
-                        "target": "main.py:101"
+                        "source": "main.py:344",
+                        "target": "main.py:105"
                     },
                     {
-                        "source": "main.py:280",
-                        "target": "main.py:101"
+                        "source": "main.py:344",
+                        "target": "main.py:105"
                     },
                     {
-                        "source": "main.py:280",
-                        "target": "main.py:101"
+                        "source": "main.py:344",
+                        "target": "main.py:105"
                     },
                     {
-                        "source": "main.py:280",
-                        "target": "main.py:101"
+                        "source": "main.py:344",
+                        "target": "main.py:105"
+                    },
+                    {
+                        "source": "main.py:344",
+                        "target": "main.py:105"
+                    },
+                    {
+                        "source": "main.py:344",
+                        "target": "main.py:105"
                     }
                 ]
             }

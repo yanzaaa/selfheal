@@ -15,6 +15,7 @@ Brittle UI tests are the #1 reason teams abandon test automation. A renamed `id`
 
 ## What it does
 Give it a target app and a plain-English acceptance spec. SelfHeal QA:
+0. **(Proactive)** Given a code changeset, it first makes a **risk-based selection** — reasoning about which tests the change can affect and running only the relevant slice (e.g. *1 of 4 suites*, not the whole suite).
 1. **Generates** a runnable UI test from the spec.
 2. **Runs** it and, on failure, **triages** the root cause with an LLM: `BRITTLE_SELECTOR` vs `REAL_BUG`.
 3. If it's a brittle locator → **rewrites the selector from the live DOM and re-runs** until green.
