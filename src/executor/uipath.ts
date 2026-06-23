@@ -40,7 +40,7 @@ function cfgFromEnv(): UiPathConfig {
     project: process.env.UIPATH_PROJECT || "",
     clientId: need("UIPATH_CLIENT_ID"),
     clientSecret: need("UIPATH_CLIENT_SECRET"),
-    scope: process.env.UIPATH_SCOPE || "OR.Execution TM.Projects",
+    scope: process.env.UIPATH_SCOPE || "OR.Execution TM.Projects TM.TestCases TM.TestSets TM.Requirements TM.Administration TM.Defects TM.TestExecutions",
   };
 }
 
@@ -86,6 +86,45 @@ class UiPathClient {
   async verify(): Promise<void> {
     await this.tm(`/api/v2/projects?%24top=1`);
   }
+
+  private projectId?: string;
+  /** Resolve the Test Manager project GUID from its prefix (e.g. "YAN"). */
+  async resolveProjectId(prefix: string): Promise<string> {
+    if (this.projectId) return this.projectId;
+    const r = await this.tm(`/api/v2/projects`);
+    const list: any[] = r?.data ?? [];
+    const p = list.find((x) => x.projectPrefix === prefix) ?? list[0];
+    if (!p?.id) throw new Error(`Test Manager project "${prefix}" not found`);
+    this.projectId = p.id as string;
+    return this.projectId;
+  }
+
+  async createTestCase(pid: string, name: string, description: string): Promise<string> {
+    const r = await this.tm(`/api/v2/${pid}/testcases`, { method: "POST", body: JSON.stringify({ name, description, projectId: pid }) });
+    return (r?.id ?? r?.data?.id) as string;
+  }
+
+  async createTestSet(pid: string, name: string): Promise<string> {
+    const r = await this.tm(`/api/v2/${pid}/testsets`, { method: "POST", body: JSON.stringify({ name, projectId: pid }) });
+    return (r?.id ?? r?.data?.id) as string;
+  }
+
+  async createExecution(pid: string, testSetId: string, name: string, testCaseIds: string[]): Promise<string> {
+    const r = await this.tm(`/api/v2/${pid}/testexecutions`, {
+      method: "POST",
+      body: JSON.stringify({ projectId: pid, testSetId, testCaseIds, name, source: "ThirdParty", sourceDetails: "SelfHeal QA agent" }),
+    });
+    return (r?.id ?? r?.data?.id) as string;
+  }
+
+  /** Open a test-case log for the execution, then finish it with a result. */
+  async logResult(pid: string, executionId: string, testCaseId: string, passed: boolean, detail: string): Promise<void> {
+    await this.tm(`/api/v2/${pid}/testcaselogs`, { method: "POST", body: JSON.stringify({ testCaseId, testExecutionId: executionId }) });
+    await this.tm(`/api/v2/${pid}/testcaselogs/testexecution/${executionId}/finish`, {
+      method: "POST",
+      body: JSON.stringify({ testCaseId, result: passed ? "Passed" : "Failed", hasError: !passed, executedBy: "SelfHeal QA", detailLink: detail }),
+    });
+  }
 }
 
 export class UiPathExecutor implements Executor {
@@ -121,20 +160,18 @@ export class UiPathExecutor implements Executor {
       return;
     }
     try {
-      // TODO(confirm against /testmanager_/swagger/index.html): create/append a
-      // TestExecution with TestCaseLogs for `result`. Structure below is the
-      // documented v2 shape; field names may differ slightly per tenant.
-      await this.client.tm(`/api/v2/projects/${this.cfg.project}/executions`, {
-        method: "POST",
-        body: JSON.stringify({
-          name: `${test.name} (SelfHeal QA)`,
-          status: result.status === "pass" ? "Passed" : "Failed",
-          testCaseLogs: result.steps.map((s) => ({ name: s.stepId, status: s.status === "pass" ? "Passed" : s.status === "fail" ? "Failed" : "None", message: s.error })),
-        }),
-      });
-      console.log(`📤 UiPath: reported "${test.name}" → ${result.status} into project ${this.cfg.project}.`);
+      const pid = await this.client.resolveProjectId(this.cfg.project);
+      const testCaseId = await this.client.createTestCase(
+        pid,
+        test.name,
+        `Authored by SelfHeal QA from ${test.url} — ${result.steps.length} steps.`,
+      );
+      const testSetId = await this.client.createTestSet(pid, `${test.name} (SelfHeal QA)`);
+      const executionId = await this.client.createExecution(pid, testSetId, `${test.name} (SelfHeal QA)`, [testCaseId]);
+      await this.client.logResult(pid, executionId, testCaseId, result.status === "pass", `SelfHeal QA result: ${result.status}`);
+      console.log(`📤 UiPath: reported "${test.name}" → ${result.status} into Test Manager (execution ${executionId}).`);
     } catch (e) {
-      console.log(`⚠️  UiPath report failed (run still valid locally): ${String(e).slice(0, 200)}`);
+      console.log(`⚠️  UiPath report failed (run still valid locally): ${String(e).slice(0, 260)}`);
     }
   }
 
