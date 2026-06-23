@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>SelfHeal QA — Deck</title>
+<style>
+  @page { size: 13.333in 7.5in; margin: 0; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  :root{ --bg:#0c0f15; --bg2:#11151d; --ink:#eef2f7; --mut:#8b97a8; --line:#222a36; --acc:#3ddc97; --acc2:#37b0ff; --red:#ff6b6b; }
+  html,body{ background:#000; font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; color:var(--ink); }
+  .slide{ position:relative; width:13.333in; height:7.5in; background:
+      radial-gradient(1200px 600px at 78% -10%, rgba(61,220,151,.10), transparent 60%),
+      radial-gradient(900px 500px at 0% 110%, rgba(55,176,255,.08), transparent 55%),
+      var(--bg);
+      padding:0.85in 0.95in; page-break-after:always; overflow:hidden; display:flex; flex-direction:column; }
+  .slide:last-child{ page-break-after:auto; }
+  .kicker{ font-size:15px; letter-spacing:.16em; text-transform:uppercase; color:var(--acc); font-weight:700; }
+  h1{ font-size:74px; line-height:1.02; letter-spacing:-.02em; font-weight:800; margin-top:8px; }
+  h2{ font-size:46px; line-height:1.08; letter-spacing:-.015em; font-weight:800; }
+  .lead{ font-size:25px; line-height:1.45; color:#cdd6e3; max-width:10in; margin-top:18px; font-weight:400; }
+  .mut{ color:var(--mut); }
+  .acc{ color:var(--acc); } .acc2{ color:var(--acc2); } .red{ color:var(--red); }
+  .foot{ position:absolute; left:0.95in; right:0.95in; bottom:0.5in; display:flex; justify-content:space-between; font-size:14px; color:var(--mut); border-top:1px solid var(--line); padding-top:12px; }
+  ul{ list-style:none; margin-top:26px; } li{ font-size:25px; line-height:1.5; padding-left:34px; position:relative; margin:14px 0; color:#dbe3ee; }
+  li:before{ content:"›"; position:absolute; left:4px; color:var(--acc); font-weight:800; }
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:26px; margin-top:30px; }
+  .card{ background:var(--bg2); border:1px solid var(--line); border-radius:18px; padding:26px 28px; }
+  .card h3{ font-size:22px; margin-bottom:8px; } .card p{ font-size:18px; color:#c4cedb; line-height:1.45; }
+  .tagline{ font-size:20px; color:var(--mut); margin-top:auto; }
+  .big{ display:flex; gap:46px; margin-top:34px; }
+  .stat .n{ font-size:92px; font-weight:850; letter-spacing:-.03em; line-height:1; }
+  .stat .l{ font-size:18px; color:var(--mut); margin-top:8px; max-width:3.2in; }
+  .pillrow{ display:flex; gap:12px; flex-wrap:wrap; margin-top:26px; }
+  .pill{ border:1px solid var(--line); background:#0f141c; color:#cdd6e3; border-radius:999px; padding:9px 18px; font-size:17px; }
+  .flow{ display:flex; align-items:center; gap:14px; margin-top:30px; flex-wrap:wrap; }
+  .node{ background:#0f141c; border:1px solid var(--line); border-radius:12px; padding:13px 18px; font-size:18px; color:#dbe3ee; }
+  .arrow{ color:var(--acc); font-size:22px; }
+  .split{ display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:30px; }
+  .good{ border-color:rgba(61,220,151,.4); } .good h3{ color:var(--acc); }
+  .bad{ border-color:rgba(255,107,107,.4); } .bad h3{ color:var(--red); }
+  .center{ justify-content:center; align-items:flex-start; }
+  .logoUi{ color:#fff; font-weight:800; } .logoUi b{ color:var(--acc); }
+</style></head><body>
+
+<!-- 1 -->
+<section class="slide">
+  <div class="kicker">UiPath AgentHack · Test Cloud track</div>
+  <h1>SelfHeal QA</h1>
+  <p class="lead">The testing agent that knows when <span class="acc">not</span> to heal.</p>
+  <div class="tagline">Built with Claude Code on UiPath for Coding Agents · github.com/yanzaaa/selfheal</div>
+  <div class="foot"><span class="logoUi">SelfHeal <b>QA</b></span><span>Autonomous testing you can trust</span></div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="kicker">The problem</div>
+  <h2>Self-healing tests have a dangerous blind spot.</h2>
+  <ul>
+    <li>Brittle UI tests are the #1 reason teams give up on test automation.</li>
+    <li>Self-healing fixes brittleness — but blind healing can heal <span class="red">right past a real bug</span>, turn green, and ship the regression.</li>
+    <li>Teams don't need tests that fix themselves. They need tests with <span class="acc">judgment</span>.</li>
+  </ul>
+  <div class="foot"><span>The problem</span><span>02</span></div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <div class="kicker">The idea</div>
+  <h2>An autonomous UiPath agent that makes two calls on its own.</h2>
+  <div class="grid2">
+    <div class="card"><h3 class="acc">1 · Risk-based selection</h3><p>Looks at the code change and runs only the test suites that change can actually affect — 1 of 4, not all of them.</p></div>
+    <div class="card"><h3 class="acc">2 · Triage on failure</h3><p>When a step fails, decides: flaky locator → <b>heal it</b>, or real bug → <b>file it</b>. Heal where it's safe; raise the alarm where it counts.</p></div>
+  </div>
+  <div class="foot"><span>The idea</span><span>03</span></div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="kicker">See it</div>
+  <h2>Same failure. Two very different responses.</h2>
+  <div class="split">
+    <div class="card good"><h3>Brittle locator</h3><p>Button id changed. The agent reads the live page, rewrites the selector, re-runs → <b>green</b>. No human needed.</p></div>
+    <div class="card bad"><h3>Real bug</h3><p>Login is genuinely broken. The agent <b>refuses to heal</b> and files a defect in UiPath Test Manager — instead of masking it.</p></div>
+  </div>
+  <div class="foot"><span>Live demo</span><span>04</span></div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <div class="kicker">The trust question</div>
+  <h2>"How do I know it won't heal past a real bug?"</h2>
+  <div class="big">
+    <div class="stat"><div class="n acc">100%</div><div class="l">triage accuracy on a seeded benchmark of 10 labeled failures</div></div>
+    <div class="stat"><div class="n">0%</div><div class="l">false-heal rate — zero real bugs healed away (industry bar: under 5%)</div></div>
+  </div>
+  <p class="lead" style="font-size:20px">Every heal carries a confidence score; low-confidence heals are flagged for a human, not applied silently.</p>
+  <div class="foot"><span>Proof, not vibes</span><span>05</span></div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <div class="kicker">How it's built</div>
+  <h2>The orchestration runs on the UiPath platform.</h2>
+  <div class="flow">
+    <span class="node">Coded Agent</span><span class="arrow">→</span>
+    <span class="node">select</span><span class="arrow">→</span>
+    <span class="node">generate</span><span class="arrow">→</span>
+    <span class="node">run</span><span class="arrow">→</span>
+    <span class="node">triage</span><span class="arrow">→</span>
+    <span class="node">heal / file</span><span class="arrow">→</span>
+    <span class="node">report</span>
+  </div>
+  <div class="pillrow">
+    <span class="pill">UiPath Coded Agent (Python SDK)</span>
+    <span class="pill">Deployed to Orchestrator</span>
+    <span class="pill">Claude triage</span>
+    <span class="pill">Test Manager: cases · sets · executions · defects</span>
+    <span class="pill">Playwright real-browser runs</span>
+  </div>
+  <div class="foot"><span>Architecture</span><span>06</span></div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <div class="kicker">Why it's different</div>
+  <h2>Autopilot heals. SelfHeal QA heals <span class="acc">and knows when to stop.</span></h2>
+  <p class="lead">UiPath Autopilot for Testers already self-heals — so we didn't try to out-heal it. We went after its blind spot: the over-healing that silently masks regressions. SelfHeal QA turns <span class="acc">restraint</span> into an auto-filed defect, attacking the #1 risk of autonomous QA.</p>
+  <div class="foot"><span>Differentiation</span><span>07</span></div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="kicker">Impact &amp; where humans fit</div>
+  <h2>Routine maintenance disappears. Judgment stays human.</h2>
+  <ul>
+    <li>Locator maintenance is fully automated away.</li>
+    <li>Humans only review the <span class="acc">real bugs</span> the agent surfaces — never hunting for them.</li>
+    <li>Drops into existing UiPath Test Manager workflows.</li>
+  </ul>
+  <div class="foot"><span>Impact</span><span>08</span></div>
+</section>
+
+<!-- 9 -->
+<section class="slide center" style="justify-content:center">
+  <div class="kicker">SelfHeal QA</div>
+  <h1 style="font-size:60px; max-width:11in">The most dangerous bug is the one your tests quietly fixed for you.</h1>
+  <p class="lead">SelfHeal QA knows when to stop.</p>
+  <div class="tagline">github.com/yanzaaa/selfheal · UiPath Test Cloud track · built with Claude Code</div>
+  <div class="foot"><span class="logoUi">SelfHeal <b>QA</b></span><span>Thank you</span></div>
+</section>
+
+</body></html>
