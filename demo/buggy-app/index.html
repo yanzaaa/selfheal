@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Acme — Sign in</title>
+    <style>
+      body { font-family: system-ui, sans-serif; background: #0f1117; color: #e6e6e6; display: grid; place-items: center; height: 100vh; margin: 0; }
+      .card { background: #171a22; padding: 32px; border-radius: 14px; width: 320px; box-shadow: 0 10px 40px rgba(0,0,0,.4); }
+      h1 { font-size: 20px; margin: 0 0 18px; }
+      input { width: 100%; padding: 10px 12px; margin: 6px 0; border-radius: 8px; border: 1px solid #2a2f3a; background: #0f1117; color: #fff; box-sizing: border-box; }
+      button { width: 100%; padding: 11px; margin-top: 10px; border: 0; border-radius: 8px; background: #4ade80; color: #06210f; font-weight: 700; cursor: pointer; }
+      .msg { margin-top: 14px; font-weight: 600; }
+      .ok { color: #4ade80; }
+      .err { color: #f87171; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Sign in to Acme</h1>
+      <input id="username" placeholder="Email" />
+      <input id="password" type="password" placeholder="Password" />
+      <!-- NOTE: this button id was renamed from #login-btn → #sign-in-btn.
+           A test written against the old id is "brittle" and the agent self-heals it. -->
+      <button id="sign-in-btn">Sign in</button>
+      <div id="status" class="msg"></div>
+    </div>
+    <script>
+      // Add ?bug=1 to the URL to simulate a REAL product bug (login stays broken),
+      // which the agent should classify as REAL_BUG instead of self-healing.
+      const buggy = new URLSearchParams(location.search).has("bug");
+      document.getElementById("sign-in-btn").addEventListener("click", () => {
+        const s = document.getElementById("status");
+        if (buggy) { s.textContent = "Something went wrong. Please try again."; s.className = "msg err"; }
+        else { s.textContent = "Welcome back, demo!"; s.className = "msg ok"; }
+      });
+    </script>
+  </body>
+</html>

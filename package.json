@@ -1,0 +1,21 @@
+{
+  "name": "selfheal-qa",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "MCP-driven self-healing test agent: turns plain-English specs into UI tests, runs them, and on failure decides real-bug vs brittle-selector and rewrites itself.",
+  "scripts": {
+    "demo": "tsx src/cli.ts demo",
+    "run": "tsx src/cli.ts run",
+    "typecheck": "tsc --noEmit",
+    "pw:install": "playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
