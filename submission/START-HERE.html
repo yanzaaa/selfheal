@@ -1,0 +1,253 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SelfHeal QA — Finish Your Submission</title>
+<style>
+  :root{--ink:#11131a;--mut:#5b6472;--line:#e6e8ee;--brand:#0aa37f;--bg:#f6f8fa;}
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;color:var(--ink);background:var(--bg);margin:0;line-height:1.55}
+  .wrap{max-width:860px;margin:0 auto;padding:32px 20px 80px}
+  h1{font-size:30px;margin:0 0 4px}
+  .sub{color:var(--mut);margin:0 0 28px;font-size:16px}
+  h2{font-size:21px;margin:36px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+  ol{padding-left:22px} ol li{margin:9px 0}
+  .pill{display:inline-block;background:#e9fbf4;color:#077a5f;border:1px solid #b6ecd9;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;margin-left:6px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0;box-shadow:0 1px 2px rgba(20,30,50,.04)}
+  .cardhead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .cardhead h3{margin:0;font-size:15px}
+  textarea{width:100%;height:150px;margin-top:10px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:13px/1.5 ui-monospace,Menlo,monospace;background:#fbfcfe;color:#222;resize:vertical}
+  .copy{background:var(--brand);color:#fff;border:0;border-radius:8px;padding:7px 16px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
+  .copy:active{transform:translateY(1px)}
+  .short textarea{height:54px}
+  a{color:var(--brand);font-weight:600}
+  .note{background:#fff8e6;border:1px solid #f3e2a8;border-radius:10px;padding:12px 14px;margin:14px 0;font-size:14px}
+  pre{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;font:13px/1.6 ui-monospace,Menlo,monospace;overflow:auto}
+  code{background:#eef1f5;padding:1px 5px;border-radius:5px;font-size:13px}
+</style></head><body><div class="wrap">
+
+<h1>Finish your submission ✅</h1>
+<p class="sub">Double-click done — you're reading the guide. Do the steps in order. Click <b>Copy</b> on a box, then paste into Devpost. Deadline: <b>Jun 29, 11:45pm EDT</b> — submit a day early, you can keep editing.</p>
+
+<h2>① Before Devpost (3 things)</h2>
+<ol>
+  <li><b>Record the demo video</b> (≤5 min). Read the <a href="#demo">Demo script</a> below out loud while screen-recording the UiPath dashboard. Upload to <b>YouTube</b> (set "Unlisted"). Copy the link.</li>
+  <li><b>Take 2 screenshots</b> — press <code>Cmd+Shift+4</code> and drag a box: (a) the <a href="https://cloud.uipath.com/yanza/DefaultTenant/testmanager_/YAN/dashboard" target="_blank">YAN dashboard</a>, (b) the filed defect. They save to your Desktop.</li>
+  <li><b>Make the deck:</b> on Devpost → <b>Resources</b> tab → download the template → fill it using <a href="#deck">Deck text</a> below → put it in Google Slides → <b>Share → "Anyone with the link"</b> → copy the link.</li>
+</ol>
+
+<h2>② Submit on Devpost (in order)</h2>
+<ol>
+  <li>Go to <a href="https://uipath-agenthack.devpost.com" target="_blank">uipath-agenthack.devpost.com</a> → <b>My projects</b> → open your draft → <b>Continue</b>.</li>
+  <li><b>Manage team</b> → it's just you → Next.</li>
+  <li><b>Project overview</b> → paste <b>Project name</b> and <b>Tagline</b> (boxes below). Upload a screenshot as the thumbnail. Next.</li>
+  <li><b>Project details</b> → in the "About the project" box paste <b>Full description</b>. In "Built with" paste the <b>tags</b>. Add media: paste your <b>YouTube link</b> + upload your 2 screenshots. Next.</li>
+  <li><b>Additional info</b> → Track = <b>Track 3: UiPath Test Cloud</b>. If asked coded vs low-code: <i>"Coded agent (Python uipath SDK), built with Claude Code, deployed to Orchestrator."</i> Paste your <b>deck link</b>. Next.</li>
+  <li><b>Submit</b> → review → click <b>Submit</b>. Confirm it no longer says <code>DRAFT</code>.</li>
+  <li><b>Best Product Feedback ($1,500):</b> find the feedback-form link in Devpost <b>Rules/Resources</b> → paste <a href="#fb">Product feedback</a> → submit.</li>
+  <li><b>Final check:</b> open your project's public page in a private/incognito window — video plays, repo + deck links work, track shows Test Cloud. 🎉</li>
+</ol>
+<div class="note"><b>Housekeeping:</b> after you're done, rotate the Anthropic API key you pasted earlier (console.anthropic.com → API keys).</div>
+
+<h2>③ Copy-paste boxes <span class="pill">click Copy</span></h2>
+<div class="short">
+  <div class="card">
+    <div class="cardhead"><h3>Project name</h3><button class="copy" onclick="cp('name')">Copy</button></div>
+    <textarea id="name" readonly>SelfHeal QA — the testing agent that knows when not to heal</textarea>
+  </div></div>
+<div class="short">
+  <div class="card">
+    <div class="cardhead"><h3>Tagline / elevator pitch</h3><button class="copy" onclick="cp('tag')">Copy</button></div>
+    <textarea id="tag" readonly>A UiPath coded agent that writes and self-heals UI tests — and knows when a failed step is actually a real bug, so it files a defect instead of quietly healing past it.</textarea>
+  </div></div>
+<div class="short">
+  <div class="card">
+    <div class="cardhead"><h3>Built with (tags)</h3><button class="copy" onclick="cp('tags')">Copy</button></div>
+    <textarea id="tags" readonly>uipath, python, playwright, anthropic, claude-code, typescript</textarea>
+  </div></div>
+
+  <div class="card">
+    <div class="cardhead"><h3>Full description (paste into About the project)</h3><button class="copy" onclick="cp('desc')">Copy</button></div>
+    <textarea id="desc" readonly>## The problem nobody admits about self-healing tests
+
+Brittle UI tests are the #1 reason teams give up on test automation. Someone renames a button, the whole suite goes red overnight, and an engineer loses a morning figuring out whether anything's actually broken.
+
+Self-healing was supposed to fix this. And it does — until you hit the worse problem it creates. A test that blindly heals itself can heal *right past a real bug*: it sees a failing step, patches around it, turns green, and quietly ships the regression. You find out when a customer does.
+
+So the real bar isn't "tests that fix themselves." It's tests that know the difference between *the locator moved* and *the product is broken*.
+
+## What it does
+
+You hand it a code change and a plain-English description of what should work. From there it's on its own:
+
+- It looks at what you changed and runs only the tests that change can affect — if the diff touches login, it runs the login suite, not all four. (That's the first of two calls it makes by itself.)
+- It writes the test, runs it in a real browser, and the moment a step fails it stops and asks the real question: flaky locator, or genuine bug?
+- Flaky locator → it reads the live page, rewrites the selector, and re-runs until it's green. Nobody touches it.
+- Real bug → it refuses to heal. It logs the failure and files a defect in UiPath Test Manager with its reasoning attached, so a human sees the regression instead of it getting buried.
+
+The whole loop runs as a UiPath coded agent, deployed to Orchestrator — the orchestration lives on the platform, not in a script off to the side.
+
+## Why it's not just "Autopilot again"
+
+UiPath already self-heals tests in Autopilot, so I didn't try to out-heal it — I went after its blind spot. The dangerous part of autonomous testing isn't the healing, it's the *over*-healing: the silent regression nobody catches. SelfHeal QA's entire personality is restraint. It heals when it's safe and pulls the alarm when it isn't.
+
+## How do you know it doesn't heal past real bugs?
+
+It's the question that kills every self-healing demo, so I answered it with a benchmark: ten labeled failures, five cosmetic locator drifts and five real regressions. The agent called all ten correctly — **100% triage accuracy, 0% false-heals** (it never healed away a real bug; the industry comfort line is under 5%). Every heal also carries a confidence score, and anything it's unsure about gets flagged for a human instead of applied silently.
+
+## How it's built
+
+- A **UiPath coded agent** (Python, the `uipath` SDK) is the brain: select → generate → run → triage → heal or file → report. It runs through the UiPath runtime and is published to the Orchestrator tenant feed.
+- **Claude** makes the triage call — bug vs. brittleness — and proposes the new selector from the page's live elements, with a deterministic fallback if the model's down.
+- **UiPath Test Manager** is the system of record: test cases, sets, executions, pass/fail logs, and the filed defects.
+- A **Playwright** executor drives a real browser for the demo, so you can watch a heal happen on an actual page.
+- Built end to end with **Claude Code** through UiPath for Coding Agents.
+
+## What's next
+
+Run it as a pre-merge check on every pull request, move the browser execution onto UiPath's own UI automation, and teach triage a third category for flaky-vs-environmental failures.
+
+Built for the **UiPath Test Cloud** track.</textarea>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><h3>Deck text (10 slides)</h3><button class="copy" onclick="cp('deckt')">Copy</button></div>
+    <textarea id="deckt" readonly># Deck — SelfHeal QA (one section per slide; keep it visual, short)
+
+**Slide 1 — Title**
+SelfHeal QA
+The testing agent that knows when *not* to heal.
+UiPath Test Cloud track · built with Claude Code · github.com/yanzaaa/selfheal
+
+**Slide 2 — The problem**
+Brittle tests kill automation programs.
+Self-healing fixes that — but blind healing hides real bugs and ships them.
+Teams don't need tests that fix themselves. They need tests with judgment.
+
+**Slide 3 — The idea**
+An autonomous UiPath agent that makes two calls on its own:
+1. Which tests a code change actually puts at risk.
+2. When a failure is a flaky locator (heal it) vs. a real bug (file it).
+Heal where it's safe. Raise the alarm where it counts.
+
+**Slide 4 — See it**
+Brittle locator → healed from the live page → green.
+Real bug → not healed → defect filed in UiPath Test Manager.
+
+**Slide 5 — The trust question**
+"How do I know it won't heal past a real bug?"
+Benchmark: 10 labeled failures — 5 cosmetic, 5 real.
+100% triage accuracy. 0% false-heals. (Industry bar: under 5%.)
+Every heal is scored; low-confidence ones get flagged for a human.
+
+**Slide 6 — How it's built**
+Coded agent on UiPath (the orchestration) · Claude triage · Test Manager (cases, sets, executions, defects) · Playwright for real-browser runs. Deployed to Orchestrator.
+
+**Slide 7 — Why it's different**
+Autopilot heals. SelfHeal QA heals *and* refuses to heal real bugs — turning that restraint into auto-filed defects. It goes straight at the #1 risk of autonomous QA: silent regressions.
+
+**Slide 8 — Impact**
+Routine locator maintenance disappears.
+Humans only look at the real bugs the agent surfaces.
+Drops into existing Test Manager workflows.
+
+**Slide 9 — Close**
+The most dangerous bug is the one your tests quietly fixed for you.
+SelfHeal QA knows when to stop.
+Repo + demo links.
+</textarea>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><h3>Product feedback (for the feedback form)</h3><button class="copy" onclick="cp('fbt')">Copy</button></div>
+    <textarea id="fbt" readonly># UiPath product feedback — from building SelfHeal QA
+
+Honest, specific feedback from building a coded agent end-to-end with Claude Code against
+Automation Cloud, the Test Manager v2 API, and the `uipath` CLI/SDK. (For the Best Product
+Feedback award — paste the relevant points into the official feedback form.)
+
+## What worked really well
+- **Coded agents are a genuinely great DX.** `uipath new` → typed `main(Input) -&gt; Output` → `uipath run` is clean, and running the agent through the UiPath runtime locally made iteration fast.
+- **`uipath auth` unattended (client-credentials)** is excellent for automation — one command, no browser, works headless.
+- **UiPath for Coding Agents / Claude Code** integration is the right bet: the installed `.agent` skill docs (SDK_REFERENCE, CLI_REFERENCE) let the coding agent self-serve the API surface.
+- **Test Manager v2 API is comprehensive** — once you find the right calls, the full lifecycle (test case → set → execution → log → defect) is all there.
+
+## Friction we hit (with concrete fixes)
+1. **`invalid_scope` is all-or-nothing.** Requesting a token with several scopes fails entirely if *one* scope name is wrong, with no indication which. We had to probe scopes one-by-one. *Fix: return which scope(s) were rejected, or ignore-and-warn on unknown scopes.*
+2. **Scope names are hard to discover.** The valid Test Manager app scopes (`TM.TestCases`, `TM.TestSets`, `TM.TestExecutions`, `TM.Defects`, …) aren't surfaced where you create the external app or in the token error. `TM.TestExecutions` (plural) is required for executions but easy to miss. *Fix: list grantable scopes per resource in the External Applications UI and link them to API operations.*
+3. **A test execution requires a test set.** Posting `testCaseIds` alone to `/testexecutions` returns a 500 (not a 400 with guidance). *Fix: validate and return a clear 400 ("testSetId required"), and document the case → set → execution → log → defect sequence in one place.*
+4. **Cloudflare blocks default `urllib` User-Agent (403, error 1010)** on `identity_/connect/token`. Coded agents using stdlib HTTP hit this immediately. *Fix: allow-list the SDK/runtime UA, or document that a UA header is required.*
+5. **Coded-agent publish via client-credentials 403s** on `GetCurrentUserExtended` (personal workspace), even when the tenant feed is selectable. *Fix: make `uipath publish` work with an app-scoped token to a tenant feed without needing a user/personal-workspace read, or clearly document the required OR scopes/role.*
+6. **`uipath publish` is interactive-only** (prompts for feed). *Fix: add `--feed` and `--yes` flags for CI/coding-agent use.*
+7. **Defect creation is log-linked only** (`CreateDefectFromTestCaseLog`) — great, but it would help to optionally pass a title/description/severity for richer auto-filed defects from agents.
+
+## Net
+The coded-agents + Test Manager combination is powerful and the right direction for agentic testing. The main gaps are **discoverability of scopes** and **non-interactive/headless publish** — both squarely in the path of the coding-agent workflows UiPath is promoting.
+</textarea>
+  </div>
+
+<h2 id="demo">④ Demo script (read while recording)</h2>
+<pre># Demo video — word-for-word script (target 4:00, hard cap 5:00)
+
+## Pull these up BEFORE you hit record
+- **Terminal window**, big font (Cmd-+ a few times), already here:
+  `cd ~/Desktop/selfheal-qa/uipath-agent`
+- **Chrome Tab 1** — UiPath Test Manager (YAN dashboard):
+  https://cloud.uipath.com/yanza/DefaultTenant/testmanager_/YAN/dashboard
+- **Chrome Tab 2** — your repo: https://github.com/yanzaaa/selfheal
+- Do ONE dry run of both commands first so they're warm and you know they're clean. If a live run ever hiccups while filming, the captured outputs in `submission/sample-run-*.json` are your backup to screen-record.
+
+Read the **SAY** lines out loud, naturally — don't read them stiff. Brackets are what's on screen.
+
+---
+
+### 0:00 · [TERMINAL]
+**SAY:** "Brittle UI tests are the number one reason teams give up on test automation. Self-healing was supposed to fix that — but it's got a blind spot nobody talks about. A test that blindly heals itself can heal right past a real bug, turn green, and ship the regression to production. This is SelfHeal QA — a UiPath agent that knows the difference between a test that's broken and a product that's broken."
+
+### 0:25 · [TERMINAL — paste this, hit Enter]
+```
+.venv/bin/uipath run main '{"url":"https://acme.app/login","spec":"A returning user logs in and sees the welcome message","changed_files":["src/auth/login.ts","src/session/token.ts"],"inject_bug":false}'
+```
+**SAY (while it runs):** "I'm handing it a code change and a plain-English spec. First thing it does on its own — look at what I changed and run only the tests that change can touch. One suite out of four, not the whole thing. Then it writes the test and runs it in a real browser."
+**SAY (when the heal line prints):** "A step just failed — the login button's id changed. It checks the live page, finds the same button under a new name, rewrites the selector, and re-runs. That's a flaky locator, not a bug — so it heals it and carries on. Green."
+
+### 1:30 · [TERMINAL — paste this, hit Enter]
+```
+.venv/bin/uipath run main '{"url":"https://acme.app/login","spec":"A returning user logs in and sees the welcome message","changed_files":["src/auth/login.ts","src/session/token.ts"],"inject_bug":true}'
+```
+**SAY:** "Same test — but this time the login is actually broken. Watch what it does differently."
+**SAY (when 'refusing to heal / Filed defect' prints):** "It refuses to heal. It recognizes this is a real regression, not a cosmetic change, so instead of masking it, it files a defect straight into UiPath Test Manager. That restraint — knowing when not to heal — is the whole point."
+
+### 2:20 · [CHROME TAB 1 — UiPath dashboard]
+*(Switch tabs. Show the Results Overview: a pass and a fail. Click into the failed execution / the defect.)*
+**SAY:** "Here's the agent's work inside UiPath Test Manager — a passing run, a failing run, and the defect it filed, with its reasoning attached: why it's a real bug and the regression it refused to heal past. A human reviews this instead of going hunting for it."
+
+### 3:00 · [TERMINAL — paste this, hit Enter]
+```
+.venv/bin/python benchmark.py
+```
+**SAY:** "Now the obvious question — how do I trust it not to heal past a real bug? So I benchmarked it. Ten labeled failures, five cosmetic, five real regressions. It got all ten right. A hundred percent triage accuracy, and zero real bugs healed away."
+
+### 3:35 · [CHROME TAB 2 — GitHub repo]
+*(Switch tabs, scroll the README slowly.)*
+**SAY:** "The whole thing runs as a UiPath coded agent — select, generate, run, triage, heal or file, report — deployed to Orchestrator, with Claude making the triage call. And I built all of it with Claude Code, through UiPath for Coding Agents."
+
+### 4:00 · [anywhere — your face cam or the repo]
+**SAY:** "Autopilot heals tests. SelfHeal QA heals them and knows when to stop — because the most dangerous bug is the one your tests quietly fixed for you. Thanks for watching."
+
+---
+**Filming tips:** rehearse once end-to-end; keep the terminal font large; pre-open both Chrome tabs so the cuts are instant; if you stumble, just re-say the line — you can trim. Keep it under 5:00.
+</pre>
+
+<h2 id="links">Links</h2>
+<ul>
+  <li>Repo: <a href="https://github.com/yanzaaa/selfheal" target="_blank">github.com/yanzaaa/selfheal</a></li>
+  <li>Hackathon: <a href="https://uipath-agenthack.devpost.com" target="_blank">uipath-agenthack.devpost.com</a></li>
+  <li>UiPath dashboard: <a href="https://cloud.uipath.com/yanza/DefaultTenant/testmanager_/YAN/dashboard" target="_blank">YAN project</a></li>
+</ul>
+
+</div>
+<script>
+function cp(id){var t=document.getElementById(id);t.focus();t.select();try{document.execCommand('copy');}catch(e){}
+  if(navigator.clipboard){navigator.clipboard.writeText(t.value).catch(function(){});}
+  var b=event.target;var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1400);}
+</script>
+</body></html>

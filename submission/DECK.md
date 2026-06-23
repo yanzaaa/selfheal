@@ -1,42 +1,43 @@
-# Presentation deck content — SelfHeal QA
-
-Drop into the AgentHack deck template (one section per slide). Keep it visual; this is the copy.
+# Deck — SelfHeal QA (one section per slide; keep it visual, short)
 
 **Slide 1 — Title**
-SelfHeal QA — the test agent that knows when *not* to heal.
-Track: UiPath Test Cloud · Built with Claude Code · github.com/yanzaaa/selfheal
+SelfHeal QA
+The testing agent that knows when *not* to heal.
+UiPath Test Cloud track · built with Claude Code · github.com/yanzaaa/selfheal
 
 **Slide 2 — The problem**
-- Brittle UI tests kill automation programs.
-- Self-healing solves brittleness… but blind healing **masks real regressions** and ships them.
-- QA needs healing *with judgment*.
+Brittle tests kill automation programs.
+Self-healing fixes that — but blind healing hides real bugs and ships them.
+Teams don't need tests that fix themselves. They need tests with judgment.
 
-**Slide 3 — The solution**
-An autonomous UiPath coded agent that makes **two agentic decisions**: (proactive) **risk-based selection** — run only the tests a changeset affects; then (reactive) **triage on failure** — heal brittle locators, but **file a defect** on real bugs. Healing where safe, alarms where it matters.
+**Slide 3 — The idea**
+An autonomous UiPath agent that makes two calls on its own:
+1. Which tests a code change actually puts at risk.
+2. When a failure is a flaky locator (heal it) vs. a real bug (file it).
+Heal where it's safe. Raise the alarm where it counts.
 
-**Slide 4 — Live demo (GIF/screens)**
-1. Brittle locator → self-healed → green.
-2. Real bug → **not healed** → defect auto-filed in Test Manager.
+**Slide 4 — See it**
+Brittle locator → healed from the live page → green.
+Real bug → not healed → defect filed in UiPath Test Manager.
 
-**Slide 4b — Proof it's trustworthy**
-Seeded benchmark: 10 labeled failures (5 cosmetic drifts, 5 real regressions) → **100% triage accuracy, 0% false-heal rate** (industry bar <5%). Every heal has a confidence score; low-confidence heals are flagged for human review. Auditable "what was healed and why."
+**Slide 5 — The trust question**
+"How do I know it won't heal past a real bug?"
+Benchmark: 10 labeled failures — 5 cosmetic, 5 real.
+100% triage accuracy. 0% false-heals. (Industry bar: under 5%.)
+Every heal is scored; low-confidence ones get flagged for a human.
 
-**Slide 5 — Architecture**
-Coded Agent (orchestration on UiPath) · Claude triage · Test Manager (cases/sets/executions/**defects**) · Playwright executor for real-browser runs.
-
-**Slide 6 — UiPath platform depth**
-Coded Agents · Test Manager v2 (incl. Defects API) · Identity auth · Built end-to-end with Claude Code (coding-agents bonus).
+**Slide 6 — How it's built**
+Coded agent on UiPath (the orchestration) · Claude triage · Test Manager (cases, sets, executions, defects) · Playwright for real-browser runs. Deployed to Orchestrator.
 
 **Slide 7 — Why it's different**
-Autopilot heals. SelfHeal QA heals **and refuses to heal real bugs** — turning that restraint into auto-filed defects. It attacks the #1 risk of autonomous QA: silent regressions.
+Autopilot heals. SelfHeal QA heals *and* refuses to heal real bugs — turning that restraint into auto-filed defects. It goes straight at the #1 risk of autonomous QA: silent regressions.
 
-**Slide 8 — Impact + where humans fit**
-- Eliminates routine locator maintenance.
-- Humans review only the surfaced real defects — judgment where it counts.
-- Plugs into existing Test Manager workflows.
+**Slide 8 — Impact**
+Routine locator maintenance disappears.
+Humans only look at the real bugs the agent surfaces.
+Drops into existing Test Manager workflows.
 
-**Slide 9 — What's next**
-Orchestrator scheduled deployment · UiPath UI-automation execution tool · flaky/environmental triage class.
-
-**Slide 10 — Close**
-"Autonomous testing you can trust — because it knows when to heal and when to raise the alarm." Repo + demo links.
+**Slide 9 — Close**
+The most dangerous bug is the one your tests quietly fixed for you.
+SelfHeal QA knows when to stop.
+Repo + demo links.
