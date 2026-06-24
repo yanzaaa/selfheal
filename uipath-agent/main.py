@@ -334,10 +334,12 @@ def main(input: SelfHealIn) -> SelfHealOut:
             if bug_txt:
                 parts.append(f"REAL BUG — refused to heal (blind self-healing would have masked this regression): {bug_txt}")
             desc = " ".join(parts)
-            tc = _tm("POST", f"/api/v2/{pid}/testcases", {"name": test["name"], "description": desc, "projectId": pid})
+            outcome = "REAL BUG -> defect filed" if bugs else ("self-healed -> passed" if heals else final)
+            run_name = f"{test['name']} - {outcome}"  # self-documenting name so the Execution list reads like a log
+            tc = _tm("POST", f"/api/v2/{pid}/testcases", {"name": run_name, "description": desc, "projectId": pid})
             tcid = tc["id"]
-            ts = _tm("POST", f"/api/v2/{pid}/testsets", {"name": f"{test['name']} (SelfHeal QA)", "projectId": pid})
-            ex = _tm("POST", f"/api/v2/{pid}/testexecutions", {"projectId": pid, "testSetId": ts["id"], "testCaseIds": [tcid], "name": f"{test['name']} (SelfHeal QA)", "source": "ThirdParty", "sourceDetails": "SelfHeal QA coded agent"})
+            ts = _tm("POST", f"/api/v2/{pid}/testsets", {"name": f"{run_name} (SelfHeal QA)", "projectId": pid})
+            ex = _tm("POST", f"/api/v2/{pid}/testexecutions", {"projectId": pid, "testSetId": ts["id"], "testCaseIds": [tcid], "name": f"{run_name} (SelfHeal QA)", "source": "ThirdParty", "sourceDetails": "SelfHeal QA coded agent"})
             execution_id = ex["id"]
             log = _tm("POST", f"/api/v2/{pid}/testcaselogs", {"testCaseId": tcid, "testExecutionId": execution_id})
             _tm("POST", f"/api/v2/{pid}/testcaselogs/testexecution/{execution_id}/finish", {"testCaseId": tcid, "result": "Passed" if final == "pass" else "Failed", "hasError": final != "pass", "executedBy": "SelfHeal QA"})
