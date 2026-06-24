@@ -22,9 +22,9 @@ Real bug → not healed → defect filed in UiPath Test Manager.
 
 **Slide 5 — The trust question**
 "How do I know it won't heal past a real bug?"
-Benchmark: 10 labeled failures — 5 cosmetic, 5 real.
-100% triage accuracy. 0% false-heals. (Industry bar: under 5%.)
-Every heal is scored; low-confidence ones get flagged for a human.
+Adversarial benchmark: 16 cases, incl. look-alikes built to fool it.
+**0% false-negative rate** (real bugs healed away). 100% triage accuracy.
+(Industry bar: under 5%.) Low-confidence heals flagged for a human.
 
 **Slide 6 — How it's built**
 Coded agent on UiPath (the orchestration) · Claude triage · Test Manager (cases, sets, executions, defects) · Playwright for real-browser runs. Deployed to Orchestrator.

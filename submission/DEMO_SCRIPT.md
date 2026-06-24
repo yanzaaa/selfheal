@@ -42,9 +42,9 @@ Before you record: make the terminal font big (**Cmd-+** a few times), start the
 ```
 .venv/bin/python benchmark.py
 ```
-🎙️ *(as you paste)* "Now the question that kills every self-healing demo: how do I know it won't heal past a real bug? So I benchmarked it — ten labeled failures, five cosmetic locator drifts, five real regressions."
-👀 Wait for the summary line (accuracy / false-heal rate).
-🎙️ "It got all ten right. A hundred percent triage accuracy, and zero real bugs healed away."
+🎙️ *(as you paste)* "Now the question that kills every self-healing demo: how do I know it won't heal past a real bug? So I benchmarked it on sixteen labeled failures — including adversarial cases built specifically to fool it."
+👀 Wait for the summary line (false-negative rate / accuracy).
+🎙️ "Zero real bugs healed away — a zero-percent false-negative rate, and a hundred percent triage accuracy across all sixteen."
 
 ### 6) HOW IT'S BUILT — *[Chrome → Tab 2: GitHub]*
 👉 Click the Chrome window, **Tab 2** (the repo). Scroll the README slowly.

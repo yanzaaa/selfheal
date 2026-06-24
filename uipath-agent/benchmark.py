@@ -44,6 +44,30 @@ CASES = [
     {"name": "transfer failed (insufficient funds)", "expected": "REAL_BUG",
      "failure": {"step": {"action": "expectText", "value": "Transfer successful"}, "failedSelector": None,
                  "snapshot": "div.error (text 'Insufficient funds')"}},
+    # --- More brittle (clear drift)
+    {"name": "search box name -> id", "expected": "BRITTLE_SELECTOR",
+     "failure": {"step": {"action": "type", "selector": "input[name=q]"}, "failedSelector": "input[name=q]",
+                 "snapshot": "input#search (placeholder 'Search products')\nbutton#search-go"}},
+    {"name": "menu button class -> testid", "expected": "BRITTLE_SELECTOR",
+     "failure": {"step": {"action": "click", "selector": ".hamburger"}, "failedSelector": ".hamburger",
+                 "snapshot": "button[data-testid='menu-toggle'] (aria-label 'Menu')"}},
+    # --- More real bugs
+    {"name": "save returns validation error", "expected": "REAL_BUG",
+     "failure": {"step": {"action": "expectText", "value": "Saved"}, "failedSelector": None,
+                 "snapshot": "div.error (text 'Email is required')\nbutton#save"}},
+    # --- ADVERSARIAL look-alikes (designed to fool a naive triage) ---
+    # Real bug that LOOKS like drift: the control still exists, but the page is in an error state -> must NOT heal.
+    {"name": "[adversarial] checkout btn present but payment declined", "expected": "REAL_BUG",
+     "failure": {"step": {"action": "click", "selector": "#pay-now"}, "failedSelector": "#pay-now",
+                 "snapshot": "div.error (text 'Payment declined — card error')\nbutton#pay-now-v2 (text 'Pay now')"}},
+    # Drift that LOOKS like a bug: scary-looking but unrelated info banner; the real control just got renamed -> heal.
+    {"name": "[adversarial] submit renamed, unrelated promo banner", "expected": "BRITTLE_SELECTOR",
+     "failure": {"step": {"action": "click", "selector": "#submit"}, "failedSelector": "#submit",
+                 "snapshot": "div.banner (text 'New! Faster checkout is here')\nbutton#submit-order (text 'Submit order')"}},
+    # Real bug masquerading as a missing-element heal target: similar id exists but it's disabled/error context.
+    {"name": "[adversarial] add-to-cart present but out of stock", "expected": "REAL_BUG",
+     "failure": {"step": {"action": "click", "selector": "#add-to-cart"}, "failedSelector": "#add-to-cart",
+                 "snapshot": "button#add-to-cart-btn[disabled] (text 'Add to cart')\ndiv.stock (text 'Out of stock')"}},
 ]
 
 
@@ -61,9 +85,11 @@ def run() -> None:
         rows.append((("OK " if ok else "MISS"), c["name"], c["expected"], verdict))
 
     n = len(CASES)
-    print(f"\nTriage benchmark — {correct}/{n} correct = {correct / n * 100:.0f}% accuracy")
+    adversarial = sum(1 for c in CASES if c["name"].startswith("[adversarial]"))
     fhr = (false_heals / real_total * 100) if real_total else 0
-    print(f"Safety: real bugs healed-away = {false_heals}/{real_total} = {fhr:.0f}% false-heal rate (industry bar <5%)")
+    print(f"\nSAFETY (the number that matters): {false_heals}/{real_total} real bugs healed-away = {fhr:.0f}% FALSE-NEGATIVE rate")
+    print(f"  {real_total} real-regression cases, including {adversarial} adversarial look-alikes built to fool the triage. Industry bar: <5%.")
+    print(f"Triage accuracy: {correct}/{n} = {correct / n * 100:.0f}% across {n} labeled cases")
     print("-" * 64)
     for res, name, exp, got in rows:
         print(f"  [{res}] {name}: expected {exp}, got {got}")

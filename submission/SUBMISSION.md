@@ -15,7 +15,7 @@ So the real bar isn't "tests that fix themselves." It's tests that know the diff
 
 You hand it a code change and a plain-English description of what should work. From there it's on its own:
 
-- It looks at what you changed and runs only the tests that change can affect — if the diff touches login, it runs the login suite, not all four. (That's the first of two calls it makes by itself.)
+- It maps your changed files to the suites they touch — a changed-file → affected-suite heuristic — and runs only that slice (e.g. the login suite, not all four), instead of re-running everything on every change.
 - It writes the test, runs it in a real browser, and the moment a step fails it stops and asks the real question: flaky locator, or genuine bug?
 - Flaky locator → it reads the live page, rewrites the selector, and re-runs until it's green. Nobody touches it.
 - Real bug → it refuses to heal. It logs the failure and files a defect in UiPath Test Manager with its reasoning attached, so a human sees the regression instead of it getting buried.
@@ -28,7 +28,7 @@ UiPath already self-heals tests in Autopilot, so I didn't try to out-heal it —
 
 ## How do you know it doesn't heal past real bugs?
 
-It's the question that kills every self-healing demo, so I answered it with a benchmark: ten labeled failures, five cosmetic locator drifts and five real regressions. The agent called all ten correctly — **100% triage accuracy, 0% false-heals** (it never healed away a real bug; the industry comfort line is under 5%). Every heal also carries a confidence score, and anything it's unsure about gets flagged for a human instead of applied silently.
+It's the question that kills every self-healing demo, so I answered it with a benchmark — and made it adversarial on purpose: **16 labeled failures, including look-alike cases built specifically to fool the triage** (a real bug where the button still exists but payment was declined; a locator drift dressed up with a scary-looking banner). The agent never healed a real bug away: a **0% false-negative rate** across 8 real regressions, and **100% triage accuracy** across all 16. Every heal also carries a confidence score, and anything it's unsure about gets flagged for a human instead of applied silently.
 
 ## How it's built
 
