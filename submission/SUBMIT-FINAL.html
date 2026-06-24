@@ -1,0 +1,177 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SelfHeal QA — Submission Cockpit</title>
+<style>
+:root{--bg:#0c0f15;--bg2:#11151d;--ink:#eef2f7;--mut:#8b97a8;--line:#222a36;--acc:#3ddc97;--acc2:#37b0ff;--red:#ff6b6b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+ background-image:radial-gradient(1100px 520px at 85% -8%,rgba(61,220,151,.10),transparent 60%),radial-gradient(800px 460px at -5% 110%,rgba(55,176,255,.08),transparent 55%);padding:42px 20px 80px}
+.wrap{max-width:980px;margin:0 auto}
+.kick{color:var(--acc);font-weight:700;letter-spacing:.16em;text-transform:uppercase;font-size:13px}
+h1{font-size:44px;line-height:1.05;letter-spacing:-.02em;margin:6px 0 4px}
+h1 b{color:var(--acc)}
+.sub{color:var(--mut);font-size:18px;margin-bottom:26px}
+h2{font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc2);margin:34px 0 14px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-bottom:14px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px}
+.pill{border:1px solid var(--line);background:#0f141c;border-radius:999px;padding:6px 13px;font-size:13px;color:#cdd6e3}
+.pill b{color:var(--acc)}
+.row{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+.field-label{font-weight:700;font-size:14px;color:#cdd6e3;margin-bottom:6px}
+.val{background:#0b0e14;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;color:#dbe3ee;white-space:pre-wrap;word-break:break-word;max-height:300px;overflow:auto}
+.val.one{white-space:nowrap;overflow:auto}
+button.copy{flex:0 0 auto;background:var(--acc);color:#06281b;border:0;border-radius:9px;padding:9px 15px;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap}
+button.copy:hover{filter:brightness(1.07)}
+button.copy.done{background:var(--acc2);color:#06223a}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.shot{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#0b0e14}
+.shot img{width:100%;display:block;cursor:zoom-in}
+.shot .cap{padding:9px 12px;font-size:13px;color:#cdd6e3;border-top:1px solid var(--line)}
+.shot .cap b{color:var(--acc)}
+ol.steps{counter-reset:s;list-style:none;margin-top:6px}
+ol.steps>li{counter-increment:s;position:relative;padding:14px 16px 14px 52px;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;background:var(--bg2)}
+ol.steps>li:before{content:counter(s);position:absolute;left:14px;top:13px;width:26px;height:26px;border-radius:50%;background:var(--acc);color:#06281b;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px}
+ol.steps b{color:var(--acc)}
+.chk li{list-style:none;padding:5px 0 5px 28px;position:relative;color:#dbe3ee}
+.chk li:before{content:"✓";position:absolute;left:0;color:var(--acc);font-weight:800}
+a{color:var(--acc2);text-decoration:none}a:hover{text-decoration:underline}
+code{background:#0b0e14;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:13px;color:#cfe9dd}
+.mut{color:var(--mut);font-size:14px}
+.dest{display:inline-flex;align-items:center;gap:6px;background:#0f141c;border:1px solid var(--line);color:#dbe3ee;border-radius:11px;padding:12px 16px;font-weight:700;font-size:14px;text-decoration:none}
+.dest:hover{border-color:var(--acc);color:#fff;text-decoration:none;background:#121821}
+.qrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+.qrow:last-of-type{border-bottom:0}
+.qrow code{flex:1;overflow:auto;white-space:nowrap;padding:8px 10px}
+.phase{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);font-weight:800;margin:22px 0 8px}
+.lightbox{position:fixed;inset:0;background:rgba(2,4,8,.92);display:none;align-items:center;justify-content:center;padding:30px;z-index:9;cursor:zoom-out}
+.lightbox img{max-width:100%;max-height:100%;border-radius:10px;border:1px solid var(--line)}
+</style></head><body><div class="wrap">
+
+<div class="kick">UiPath AgentHack · Test Cloud track · final review</div>
+<h1>SelfHeal <b>QA</b> — Submission Cockpit</h1>
+<div class="sub">Everything's built and pushed. Review below, then follow the 3 steps. You sign + upload.</div>
+
+<div class="pills">
+ <span class="pill"><b>✓</b> Video 4:50 (cap 5:00)</span>
+ <span class="pill"><b>✓</b> Captions (.srt)</span>
+ <span class="pill"><b>✓</b> Repo pushed · MIT</span>
+ <span class="pill"><b>✓</b> Live benchmark 16/16 · 0% false-neg</span>
+ <span class="pill"><b>✓</b> Serverless Orchestrator job: Successful</span>
+ <span class="pill"><b>✓</b> 6 screenshots</span>
+ <span class="pill"><b>✓</b> Deck PDF</span>
+</div>
+
+<h2>Copy-paste fields</h2>
+<div class="card"><div class="row"><div style="flex:1"><div class="field-label">Project name</div><div class="val one" id="name">SelfHeal QA</div></div><button class="copy" onclick="cp('name',this)">Copy</button></div></div>
+<div class="card"><div class="row"><div style="flex:1"><div class="field-label">Tagline / elevator pitch</div><div class="val one" id="tag">The testing agent that knows when not to heal.</div></div><button class="copy" onclick="cp('tag',this)">Copy</button></div></div>
+<div class="card"><div class="row"><div style="flex:1"><div class="field-label">About the project (paste into Devpost — Markdown)</div><div class="val" id="desc">## The problem nobody admits about self-healing tests
+
+Brittle UI tests are the #1 reason teams give up on test automation. Someone renames a button, the whole suite goes red overnight, and an engineer loses a morning figuring out whether anything's actually broken.
+
+Self-healing was supposed to fix this. And it does — until you hit the worse problem it creates. A test that blindly heals itself can heal *right past a real bug*: it sees a failing step, patches around it, turns green, and quietly ships the regression. You find out when a customer does.
+
+So the real bar isn't "tests that fix themselves." It's tests that know the difference between *the locator moved* and *the product is broken*.
+
+## What it does
+
+You hand it a code change and a plain-English description of what should work. From there it's on its own:
+
+- It maps your changed files to the suites they touch — a changed-file → affected-suite heuristic — and runs only that slice (e.g. the login suite, not all four), instead of re-running everything on every change.
+- It writes the test, runs it in a real browser, and the moment a step fails it stops and asks the real question: flaky locator, or genuine bug?
+- Flaky locator → it reads the live page, rewrites the selector, and re-runs until it's green. Nobody touches it.
+- Real bug → it refuses to heal. It logs the failure and files a defect in UiPath Test Manager with its reasoning attached, so a human sees the regression instead of it getting buried.
+
+The whole loop runs as a UiPath coded agent, deployed to Orchestrator — the orchestration lives on the platform, not in a script off to the side.
+
+## Why it's not just "Autopilot again"
+
+UiPath already self-heals tests in Autopilot, so I didn't try to out-heal it — I went after its blind spot. The dangerous part of autonomous testing isn't the healing, it's the *over*-healing: the silent regression nobody catches. SelfHeal QA's entire personality is restraint. It heals when it's safe and pulls the alarm when it isn't.
+
+## How do you know it doesn't heal past real bugs?
+
+It's the question that kills every self-healing demo, so I answered it with a benchmark — and made it adversarial on purpose: **16 labeled failures, including look-alike cases built specifically to fool the triage** (a real bug where the button still exists but payment was declined; a locator drift dressed up with a scary-looking banner). The agent never healed a real bug away: a **0% false-negative rate** across 8 real regressions, and **100% triage accuracy** across all 16. Every heal also carries a confidence score, and anything it's unsure about gets flagged for a human instead of applied silently.
+
+The full per-case transcript — verdict, confidence, model, and timestamp for all 16 — is committed at `submission/benchmark-results.json` and regenerates on every `benchmark.py` run. The triage verdicts are **live Claude calls**; only the labeled app states are seeded fixtures, so the benchmark is repeatable.
+
+## How it's built
+
+- A **UiPath coded agent** (Python — scaffolded, run, and published with the `uipath` CLI; it calls UiPath Identity + Test Manager v2 REST APIs directly) is the brain: select → generate → run → triage → heal or file → report. It runs through the UiPath runtime and is published to the Orchestrator tenant feed — and I verified it end-to-end by running that published package as a **serverless Orchestrator job**, which completed `Successful`.
+- **Claude** makes the triage call — bug vs. brittleness — and proposes the new selector from the page's live elements, with a deterministic fallback if the model's down.
+- **UiPath Test Manager** is the system of record: test cases, sets, executions, pass/fail logs, and the filed defects.
+- A **Playwright** executor drives a real browser for the demo, so you can watch a heal happen on an actual page.
+- Built end to end with **Claude Code** through UiPath for Coding Agents.
+
+## What's next
+
+Run it as a pre-merge check on every pull request, move the browser execution onto UiPath's own UI automation, and teach triage a third category for flaky-vs-environmental failures.
+
+Built **solo** for the **UiPath Test Cloud** track — and this is my **first time building on the UiPath platform**, start to finish with Claude Code through UiPath for Coding Agents.</div></div><button class="copy" onclick="cp('desc',this)">Copy</button></div></div>
+
+<h2>Screenshots (gallery)</h2>
+<div class="grid">
+ <div class="shot"><img src="screenshots/01-self-heal-pass.png"><div class="cap"><b>Heals a brittle locator</b> → green</div></div>
+ <div class="shot"><img src="screenshots/02-refuse-to-heal-defect.png"><div class="cap"><b>Refuses a real bug</b> → files a defect</div></div>
+ <div class="shot"><img src="screenshots/03-test-manager-runs.png"><div class="cap"><b>Self-documenting runs</b> in Test Manager</div></div>
+ <div class="shot"><img src="screenshots/04-defect-third-party.png"><div class="cap"><b>Source: Third Party</b> + filed Defect</div></div>
+ <div class="shot"><img src="screenshots/05-benchmark-16of16.png"><div class="cap"><b>0% false-negative</b>, 16/16</div></div>
+ <div class="shot"><img src="screenshots/06-coded-agent-repo.png"><div class="cap"><b>UiPath coded agent</b> in the repo</div></div>
+ <div class="shot" style="grid-column:1/-1"><img src="screenshots/07-orchestrator-job.png"><div class="cap"><b>Verified serverless Orchestrator job</b> — Successful, with the agent's live timeline: self-heal the brittle locator, then refuse the real bug and file a defect</div></div>
+</div>
+<p class="mut" style="margin-top:10px">✓ All <b>7</b> screenshots are in <code>submission/screenshots/</code> — drag them straight into the Devpost gallery.</p>
+
+<h2>Destinations — click to go</h2>
+<div class="card" style="display:flex;flex-wrap:wrap;gap:10px">
+ <a class="dest" href="https://studio.youtube.com/" target="_blank">▶ YouTube Studio (upload video)</a>
+ <a class="dest" href="https://uipath-agenthack.devpost.com/" target="_blank">🏠 AgentHack hub (Devpost)</a>
+ <a class="dest" href="https://devpost.com/submit-to/29624-uipath-agenthack/manage/submissions" target="_blank">📤 Submit / manage your project</a>
+ <a class="dest" href="https://forms.office.com/e/KitjGLF5k1" target="_blank">💬 Product Feedback form ($1,500)</a>
+ <a class="dest" href="https://uipath-agenthack.devpost.com/resources" target="_blank">📚 AgentHack Resources</a>
+ <a class="dest" href="https://github.com/yanzaaa/selfheal" target="_blank">💻 Your repo</a>
+</div>
+<p class="mut" style="margin-top:8px">Devpost links need you logged in + registered for the hackathon (use “Join hackathon” on the hub if you haven't). Deadline: <b>June 29, 2026 · 11:45pm EDT</b>.</p>
+
+<h2>Quick-open files (copy → paste in Terminal)</h2>
+<div class="card">
+ <div class="qrow"><code id="q1">open ~/Desktop/SelfHeal-QA-demo.mp4</code><button class="copy" onclick="cp('q1',this)">Copy</button></div>
+ <div class="qrow"><code id="q2">open -R ~/Desktop/SelfHeal-QA-demo.srt</code><button class="copy" onclick="cp('q2',this)">Copy</button></div>
+ <div class="qrow"><code id="q3">open ~/Desktop/selfheal-qa/submission/screenshots</code><button class="copy" onclick="cp('q3',this)">Copy</button></div>
+ <div class="qrow"><code id="q4">open ~/Desktop/selfheal-qa/submission/SelfHeal-QA-Deck.pdf</code><button class="copy" onclick="cp('q4',this)">Copy</button></div>
+ <div class="qrow"><code id="q5">open -e ~/Desktop/selfheal-qa/submission/PRODUCT_FEEDBACK.md</code><button class="copy" onclick="cp('q5',this)">Copy</button></div>
+ <div class="qrow"><code id="q6">open ~/Desktop/selfheal-qa/submission/SUBMIT-FINAL.html</code><button class="copy" onclick="cp('q6',this)">Copy</button></div>
+ <p class="mut" style="margin-top:6px">Or in Finder: <b>Cmd-Shift-G</b> → paste <code>~/Desktop/selfheal-qa/submission</code></p>
+</div>
+
+<h2>Submit — step by step</h2>
+
+<div class="phase">Phase 1 · YouTube (~3 min)</div>
+<ol class="steps">
+ <li>Go to <a href="https://youtube.com/upload" target="_blank">youtube.com/upload</a> → upload <b>SelfHeal-QA-demo.mp4</b>. Set visibility to <b>Unlisted</b> (fine for judging).</li>
+ <li>After it processes: <b>Subtitles → Add → Upload file → SelfHeal-QA-demo.srt</b> → Publish. Copy the watch link.</li>
+</ol>
+
+<div class="phase">Phase 2 · Devpost submission</div>
+<ol class="steps">
+ <li>Open the AgentHack Devpost → your project → <b>Edit / Manage</b>.</li>
+ <li><b>Name</b> + <b>tagline</b>: paste from the copy fields above.</li>
+ <li><b>About the project</b>: hit <b>Copy</b> on the description above, paste it in.</li>
+ <li><b>Track:</b> select <b>Test Cloud</b>.</li>
+ <li><b>Links:</b> add the GitHub repo + your YouTube link (video / "try it" fields).</li>
+ <li><b>Gallery:</b> drag the <b>6 screenshots</b> from <code>submission/screenshots/</code> (+ the optional 7th).</li>
+ <li><b>Upload</b> <b>SelfHeal-QA-Deck.pdf</b>.</li>
+ <li>Confirm it says <b>built with Claude Code</b> (it's in the description — grabs the coding-agent bonus). Click <b>Submit</b>.</li>
+</ol>
+
+<div class="phase">Phase 3 · Product Feedback form ($1,500)</div>
+<ol class="steps">
+ <li>Open the official <b>Best Product Feedback</b> form → paste the points from <code>submission/PRODUCT_FEEDBACK.md</code> → submit.</li>
+</ol>
+
+<p class="mut" style="margin-top:24px">That's it. Strong contender, every claim provable. Go win it. 🏆</p>
+
+</div>
+<div class="lightbox" id="lb" onclick="this.style.display='none'"><img id="lbimg"></div>
+<script>
+function cp(id,btn){var t=document.getElementById(id).innerText;navigator.clipboard.writeText(t).then(function(){var o=btn.textContent;btn.textContent='Copied ✓';btn.classList.add('done');setTimeout(function(){btn.textContent=o;btn.classList.remove('done')},1400)})}
+document.querySelectorAll('.shot img').forEach(function(im){im.onclick=function(){document.getElementById('lbimg').src=im.src;document.getElementById('lb').style.display='flex'}})
+</script>
+</body></html>

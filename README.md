@@ -23,6 +23,10 @@ spec ─▶ generate ─▶ run ─▶ pass ✅
 | **Adversarial benchmark: 0% false-negative, 16/16** | **Runs as a UiPath coded agent** |
 | ![Benchmark: 0% false-negative rate, 16/16 triage accuracy](submission/screenshots/05-benchmark-16of16.png) | ![UiPath coded agent in the repo](submission/screenshots/06-coded-agent-repo.png) |
 
+**Verified on the platform** — the published package run as a **serverless Orchestrator job** (`Successful`), showing the agent's live timeline: self-heal the brittle locator, then refuse the real bug and file a defect.
+
+![Orchestrator serverless job — Successful, with the agent's heal-and-refuse timeline](submission/screenshots/07-orchestrator-job.png)
+
 ## Why it's different from UiPath Autopilot
 Autopilot for Testers self-heals. SelfHeal QA's novelty is **restraint**: it withholds healing when the failure is a genuine regression and turns that judgment into an auto-filed Test Manager defect — directly attacking the biggest risk of autonomous QA: **silent regressions masked by over-eager healing.**
 
