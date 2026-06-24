@@ -215,7 +215,7 @@ Before you record: make the terminal font big (**Cmd-+** a few times), start the
 ```
 .venv/bin/uipath run main '{"url":"https://acme.app/login","spec":"A returning user logs in and sees the welcome message","changed_files":["src/auth/login.ts","src/session/token.ts"],"inject_bug":true}'
 ```
-🎙️ *(as you paste)* "Now the exact same test — except this time the login is genuinely broken. Same failure on the surface. Watch what it does differently."
+🎙️ *(as you paste)* "Now the exact same test — except this time the login is genuinely broken. Same failure on the surface. A blind self-healer would just patch around this and ship the bug — watch mine do the opposite."
 👀 Wait ~15 seconds. Look for: **`Real bug … refusing to heal`** → **`Filed defect …`**.
 🎙️ "It refuses to heal. It recognizes this is a real regression, not a cosmetic change — so instead of masking it, it files a defect straight into UiPath Test Manager. Knowing when *not* to heal: that's the whole point."
 
