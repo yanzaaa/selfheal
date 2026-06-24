@@ -1,0 +1,17 @@
+{
+  "captured_utc": "2026-06-24T07:07:12+00:00",
+  "platform": "UiPath Orchestrator (Automation Cloud)",
+  "account": "yanza",
+  "tenant": "DefaultTenant",
+  "folder": "Shared",
+  "package": "selfheal-qa-agent 0.1.0 (published to tenant feed via `uipath publish --tenant`)",
+  "job_key": "d5d3c7f6-bd39-4417-ad2c-aa9bc78e7b28",
+  "state": "Successful",
+  "runtime": "Default Serverless",
+  "host_machine": "02B8DF83-1E36-7D00-25E6-0B49CE3B89FE",
+  "runtime_type": "Serverless",
+  "start_time": "2026-06-24T07:06:15.02Z",
+  "end_time": "2026-06-24T07:06:25.22Z",
+  "release_name": "SelfHeal QA",
+  "source": "Manual"
+}

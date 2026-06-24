@@ -53,6 +53,8 @@ npm run run -- --url "file://$PWD/demo/buggy-app/index.html" \
 ```
 Add `?bug=1` to the URL to see the agent correctly **file a defect** instead of healing.
 
+**Verified on-platform run:** the published package was executed as a job on Orchestrator's **Default Serverless** runtime and completed **`Successful`** in 10.2s — job `d5d3c7f6-bd39-4417-ad2c-aa9bc78e7b28`, captured in [`submission/orchestrator-job.json`](submission/orchestrator-job.json).
+
 Key-free demo (no API keys, mock execution): `npm run demo`.
 
 ## How it works
