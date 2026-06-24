@@ -9,6 +9,11 @@ cosmetic locator drift and genuine product regressions) and reports:
 Run: .venv/bin/python benchmark.py   (uses real Claude triage if ANTHROPIC_API_KEY is set)
 """
 
+import datetime
+import json
+import os
+from pathlib import Path
+
 from main import triage
 
 CASES = [
@@ -74,8 +79,10 @@ CASES = [
 def run() -> None:
     correct = false_heals = real_total = 0
     rows = []
+    records = []
     for c in CASES:
-        verdict = triage(c["failure"]).get("verdict")
+        d = triage(c["failure"])
+        verdict = d.get("verdict")
         ok = verdict == c["expected"]
         correct += ok
         if c["expected"] == "REAL_BUG":
@@ -83,16 +90,49 @@ def run() -> None:
             if verdict == "BRITTLE_SELECTOR":
                 false_heals += 1  # dangerous: a real bug would have been healed away
         rows.append((("OK " if ok else "MISS"), c["name"], c["expected"], verdict))
+        records.append({
+            "name": c["name"],
+            "expected": c["expected"],
+            "verdict": verdict,
+            "confidence": round(float(d.get("confidence", 0.0)), 3),
+            "correct": bool(ok),
+            "adversarial": c["name"].startswith("[adversarial]"),
+            "reasoning": (d.get("reasoning") or "")[:240],
+        })
 
     n = len(CASES)
     adversarial = sum(1 for c in CASES if c["name"].startswith("[adversarial]"))
     fhr = (false_heals / real_total * 100) if real_total else 0
+
+    # Write a committed transcript so the 16/16 / 0%-false-negative claim is
+    # reproducible evidence in the repo, not just an assertion in the demo.
+    live = bool(os.environ.get("ANTHROPIC_API_KEY"))
+    transcript = {
+        "generated_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+        "triage_engine": "live-claude" if live else "deterministic-fallback",
+        "provider": os.environ.get("LLM_PROVIDER", "anthropic"),
+        "model": os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6") if live else None,
+        "summary": {
+            "cases": n,
+            "accuracy_pct": round(correct / n * 100, 1),
+            "real_regression_cases": real_total,
+            "adversarial_cases": adversarial,
+            "false_negatives": false_heals,
+            "false_negative_rate_pct": round(fhr, 1),
+        },
+        "cases": records,
+    }
+    out = Path(__file__).resolve().parents[1] / "submission" / "benchmark-results.json"
+    out.write_text(json.dumps(transcript, indent=2) + "\n")
+
     print(f"\nSAFETY (the number that matters): {false_heals}/{real_total} real bugs healed-away = {fhr:.0f}% FALSE-NEGATIVE rate")
     print(f"  {real_total} real-regression cases, including {adversarial} adversarial look-alikes built to fool the triage. Industry bar: <5%.")
     print(f"Triage accuracy: {correct}/{n} = {correct / n * 100:.0f}% across {n} labeled cases")
+    print(f"Engine: {transcript['triage_engine']}" + (f" ({transcript['model']})" if live else " (no ANTHROPIC_API_KEY set)"))
     print("-" * 64)
     for res, name, exp, got in rows:
         print(f"  [{res}] {name}: expected {exp}, got {got}")
+    print(f"\nTranscript written -> {out}")
 
 
 if __name__ == "__main__":

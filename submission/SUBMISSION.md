@@ -30,9 +30,11 @@ UiPath already self-heals tests in Autopilot, so I didn't try to out-heal it —
 
 It's the question that kills every self-healing demo, so I answered it with a benchmark — and made it adversarial on purpose: **16 labeled failures, including look-alike cases built specifically to fool the triage** (a real bug where the button still exists but payment was declined; a locator drift dressed up with a scary-looking banner). The agent never healed a real bug away: a **0% false-negative rate** across 8 real regressions, and **100% triage accuracy** across all 16. Every heal also carries a confidence score, and anything it's unsure about gets flagged for a human instead of applied silently.
 
+The full per-case transcript — verdict, confidence, model, and timestamp for all 16 — is committed at `submission/benchmark-results.json` and regenerates on every `benchmark.py` run. The triage verdicts are **live Claude calls**; only the labeled app states are seeded fixtures, so the benchmark is repeatable.
+
 ## How it's built
 
-- A **UiPath coded agent** (Python, the `uipath` SDK) is the brain: select → generate → run → triage → heal or file → report. It runs through the UiPath runtime and is published to the Orchestrator tenant feed.
+- A **UiPath coded agent** (Python — scaffolded, run, and published with the `uipath` CLI; it calls UiPath Identity + Test Manager v2 REST APIs directly) is the brain: select → generate → run → triage → heal or file → report. It runs through the UiPath runtime and is published to the Orchestrator tenant feed.
 - **Claude** makes the triage call — bug vs. brittleness — and proposes the new selector from the page's live elements, with a deterministic fallback if the model's down.
 - **UiPath Test Manager** is the system of record: test cases, sets, executions, pass/fail logs, and the filed defects.
 - A **Playwright** executor drives a real browser for the demo, so you can watch a heal happen on an actual page.
