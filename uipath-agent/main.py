@@ -316,7 +316,7 @@ def main(input: SelfHealIn) -> SelfHealOut:
             step["selector"] = d["suggestedSelector"]
             continue
         bugs.append({"step": f["step"]["id"], "reasoning": d.get("reasoning", ""), "confidence": conf})
-        timeline.append(f"Real bug ({int(conf * 100)}%) — refusing to heal; filing a defect (blind healing would mask this)")
+        timeline.append(f"DECISION: REAL BUG ({int(conf * 100)}%) — refusing to heal; filing a defect. Reason: {d.get('reasoning', '')[:140]}")
         break
 
     # Report through UiPath Test Manager
