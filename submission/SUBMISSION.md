@@ -34,7 +34,7 @@ The full per-case transcript — verdict, confidence, model, and timestamp for a
 
 ## How it's built
 
-- A **UiPath coded agent** (Python — scaffolded, run, and published with the `uipath` CLI; it calls UiPath Identity + Test Manager v2 REST APIs directly) is the brain: select → generate → run → triage → heal or file → report. It runs through the UiPath runtime and is published to the Orchestrator tenant feed.
+- A **UiPath coded agent** (Python — scaffolded, run, and published with the `uipath` CLI; it calls UiPath Identity + Test Manager v2 REST APIs directly) is the brain: select → generate → run → triage → heal or file → report. It runs through the UiPath runtime and is published to the Orchestrator tenant feed — and I verified it end-to-end by running that published package as a **serverless Orchestrator job**, which completed `Successful` (job record committed in the repo).
 - **Claude** makes the triage call — bug vs. brittleness — and proposes the new selector from the page's live elements, with a deterministic fallback if the model's down.
 - **UiPath Test Manager** is the system of record: test cases, sets, executions, pass/fail logs, and the filed defects.
 - A **Playwright** executor drives a real browser for the demo, so you can watch a heal happen on an actual page.
