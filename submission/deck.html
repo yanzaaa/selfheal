@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"/>
-<title>SelfHeal QA — Deck</title>
+<title>SelfHeal QA: Deck</title>
 <style>
   @page { size: 13.333in 7.5in; margin: 0; }
   * { margin:0; padding:0; box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
@@ -55,7 +55,7 @@
   <h2>Self-healing tests have a dangerous blind spot.</h2>
   <ul>
     <li>Brittle UI tests are the #1 reason teams give up on test automation.</li>
-    <li>Self-healing fixes brittleness — but blind healing can heal <span class="red">right past a real bug</span>, turn green, and ship the regression.</li>
+    <li>Self-healing fixes brittleness, but blind healing can heal <span class="red">right past a real bug</span>, turn green, and ship the regression.</li>
     <li>Teams don't need tests that fix themselves. They need tests with <span class="acc">judgment</span>.</li>
   </ul>
   <div class="foot"><span>The problem</span><span>02</span></div>
@@ -66,7 +66,7 @@
   <div class="kicker">The idea</div>
   <h2>An autonomous UiPath agent that makes two calls on its own.</h2>
   <div class="grid2">
-    <div class="card"><h3 class="acc">1 · Risk-based selection</h3><p>Looks at the code change and runs only the test suites that change can actually affect — 1 of 4, not all of them.</p></div>
+    <div class="card"><h3 class="acc">1 · Risk-based selection</h3><p>Looks at the code change and runs only the test suites that change can actually affect: just 1 of 4, not all of them.</p></div>
     <div class="card"><h3 class="acc">2 · Triage on failure</h3><p>When a step fails, decides: flaky locator → <b>heal it</b>, or real bug → <b>file it</b>. Heal where it's safe; raise the alarm where it counts.</p></div>
   </div>
   <div class="foot"><span>The idea</span><span>03</span></div>
@@ -78,7 +78,7 @@
   <h2>Same failure. Two very different responses.</h2>
   <div class="split">
     <div class="card good"><h3>Brittle locator</h3><p>Button id changed. The agent reads the live page, rewrites the selector, re-runs → <b>green</b>. No human needed.</p></div>
-    <div class="card bad"><h3>Real bug</h3><p>Login is genuinely broken. The agent <b>refuses to heal</b> and files a defect in UiPath Test Manager — instead of masking it.</p></div>
+    <div class="card bad"><h3>Real bug</h3><p>Login is genuinely broken. The agent <b>refuses to heal</b> and files a defect in UiPath Test Manager, instead of masking it.</p></div>
   </div>
   <div class="foot"><span>Live demo</span><span>04</span></div>
 </section>
@@ -88,7 +88,7 @@
   <div class="kicker">The trust question</div>
   <h2>"How do I know it won't heal past a real bug?"</h2>
   <div class="big">
-    <div class="stat"><div class="n acc">0%</div><div class="l">false-negative rate — zero real bugs healed away, even on adversarial look-alikes (bar: &lt;5%)</div></div>
+    <div class="stat"><div class="n acc">0%</div><div class="l">false-negative rate: zero real bugs healed away, even on adversarial look-alikes (bar: &lt;5%)</div></div>
     <div class="stat"><div class="n">100%</div><div class="l">triage accuracy across 16 labeled cases built to fool it</div></div>
   </div>
   <p class="lead" style="font-size:20px">Every heal carries a confidence score; low-confidence heals are flagged for a human, not applied silently.</p>
@@ -122,7 +122,7 @@
 <section class="slide">
   <div class="kicker">Why it's different</div>
   <h2>Autopilot heals. SelfHeal QA heals <span class="acc">and knows when to stop.</span></h2>
-  <p class="lead">UiPath Autopilot for Testers already self-heals — so we didn't try to out-heal it. We went after its blind spot: the over-healing that silently masks regressions. SelfHeal QA turns <span class="acc">restraint</span> into an auto-filed defect, attacking the #1 risk of autonomous QA.</p>
+  <p class="lead">UiPath Autopilot for Testers already self-heals, so we didn't try to out-heal it. We went after its blind spot: the over-healing that silently masks regressions. SelfHeal QA turns <span class="acc">restraint</span> into an auto-filed defect, attacking the #1 risk of autonomous QA.</p>
   <div class="foot"><span>Differentiation</span><span>07</span></div>
 </section>
 
@@ -132,7 +132,7 @@
   <h2>Routine maintenance disappears. Judgment stays human.</h2>
   <ul>
     <li>Locator maintenance is fully automated away.</li>
-    <li>Humans only review the <span class="acc">real bugs</span> the agent surfaces — never hunting for them.</li>
+    <li>Humans only review the <span class="acc">real bugs</span> the agent surfaces, never hunting for them.</li>
     <li>Drops into existing UiPath Test Manager workflows.</li>
   </ul>
   <div class="foot"><span>Impact</span><span>08</span></div>
