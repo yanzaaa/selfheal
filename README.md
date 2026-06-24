@@ -1,6 +1,6 @@
 # SelfHeal QA — the test agent that knows when *not* to heal
 
-> **UiPath AgentHack · Test Cloud track · built end-to-end with Claude Code.**
+> **UiPath AgentHack · Test Cloud track · first-time UiPath builder · built solo, end-to-end, with Claude Code.**
 
 Brittle UI tests are the #1 reason teams abandon test automation. Self-healing fixes broken locators automatically — but it has a dangerous blind spot: **it can heal right past a real bug and ship the regression.**
 

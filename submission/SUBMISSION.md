@@ -42,5 +42,5 @@ It's the question that kills every self-healing demo, so I answered it with a be
 
 Run it as a pre-merge check on every pull request, move the browser execution onto UiPath's own UI automation, and teach triage a third category for flaky-vs-environmental failures.
 
-Built for the **UiPath Test Cloud** track.
+Built **solo** for the **UiPath Test Cloud** track — and this is my **first time building on the UiPath platform**, start to finish with Claude Code through UiPath for Coding Agents.
 <!--PASTE-END-->
