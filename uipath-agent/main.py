@@ -164,6 +164,9 @@ def run_test(test: dict, inject_bug: bool):
 
 # Substrings in the page snapshot that signal a real error/regression state — the restraint
 # guardrail refuses to silently heal over these even on a confident BRITTLE_SELECTOR call.
+# Heal confidence floor. MUST stay in sync with HEAL_RESTRAINT.minConfidence in src/heal.ts
+# (a cross-language parity test asserts this) — the whole thesis is that both agents agree.
+MIN_CONFIDENCE = 0.7
 ERROR_SNAPSHOT_SIGNALS = ("error", "alert", "role=alert", "declined", "denied", "failure", "exception")
 
 
@@ -341,7 +344,7 @@ def main(input: SelfHealIn) -> SelfHealOut:
             # RESTRAINT GUARDRAIL (enforced in code): never silently rewrite a locator on a shaky
             # call. Below the confidence floor, OR when the page shows an error/alert state (a real
             # regression often masquerades as a drifted selector), withhold the heal and escalate.
-            low = conf < 0.7
+            low = conf < MIN_CONFIDENCE
             error_state = _snapshot_looks_like_error(f.get("snapshot", ""))
             if low or error_state:
                 why = "confidence below 70% floor" if low else "page is in an error/alert state"

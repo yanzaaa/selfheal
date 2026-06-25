@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { readFileSync } from "node:fs";
 import { attemptHeal, snapshotLooksLikeError, HEAL_RESTRAINT } from "../src/heal";
 import { runAgent } from "../src/agent";
 import { MockLLM } from "../src/llm";
@@ -129,5 +130,27 @@ describe("runAgent — full loop", () => {
     expect(report.finalStatus).toBe("fail");
     expect(report.bugs.length).toBe(1);
     expect(report.heals.length).toBe(0);
+  });
+});
+
+// The whole thesis is "the TS and Python coded agents enforce the SAME restraint." This guards
+// against a one-sided edit silently desynchronizing the two gates.
+describe("cross-language parity — the TS and Python gates must agree", () => {
+  const py = readFileSync("uipath-agent/main.py", "utf8");
+
+  it("the Python MIN_CONFIDENCE floor equals the TS HEAL_RESTRAINT.minConfidence", () => {
+    const m = py.match(/MIN_CONFIDENCE\s*=\s*([\d.]+)/);
+    expect(m, "MIN_CONFIDENCE not found in main.py").toBeTruthy();
+    expect(Number(m![1])).toBe(HEAL_RESTRAINT.minConfidence);
+  });
+
+  it("the Python ERROR_SNAPSHOT_SIGNALS equal the TS errorSignals (same set, same order)", () => {
+    const m = py.match(/ERROR_SNAPSHOT_SIGNALS\s*=\s*\(([^)]*)\)/);
+    expect(m, "ERROR_SNAPSHOT_SIGNALS not found in main.py").toBeTruthy();
+    const pySignals = m![1]
+      .split(",")
+      .map((s) => s.trim().replace(/^["']|["']$/g, ""))
+      .filter(Boolean);
+    expect(pySignals).toEqual(HEAL_RESTRAINT.errorSignals);
   });
 });

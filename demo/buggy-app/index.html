@@ -31,7 +31,7 @@
       const buggy = new URLSearchParams(location.search).has("bug");
       document.getElementById("sign-in-btn").addEventListener("click", () => {
         const s = document.getElementById("status");
-        if (buggy) { s.textContent = "Something went wrong. Please try again."; s.className = "msg err"; }
+        if (buggy) { s.textContent = "Error: sign-in failed. Access denied."; s.className = "msg err"; }
         else { s.textContent = "Welcome back, demo!"; s.className = "msg ok"; }
       });
     </script>
