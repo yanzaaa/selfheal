@@ -215,6 +215,7 @@ def triage(failure: dict) -> dict:
                     {
                         "model": os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6"),
                         "max_tokens": 600,
+                        "temperature": 0,  # deterministic triage so results are stable across runs
                         "system": system,
                         "messages": [{"role": "user", "content": user}],
                     }

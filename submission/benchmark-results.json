@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-25T05:34:04+00:00",
+  "generated_at_utc": "2026-06-25T05:48:32+00:00",
   "triage_engine": "live-claude",
   "valid_live_result": true,
   "caveat": null,
@@ -23,7 +23,7 @@
       "correct": true,
       "engine": "claude",
       "adversarial": false,
-      "reasoning": "The login button exists and is functional but its ID was renamed from 'login-btn' to 'sign-in-btn'. The button with text 'Sign in' is clearly the same login button, just with a different identifier."
+      "reasoning": "The login button exists and is functional but has been renamed from 'login-btn' to 'sign-in-btn'. The feature works but the ID attribute drifted."
     },
     {
       "name": "add-to-cart id -> data-testid",
@@ -33,7 +33,7 @@
       "correct": true,
       "engine": "claude",
       "adversarial": false,
-      "reasoning": "The 'Add to cart' button is present and functional, but its ID selector '#add-to-cart' no longer matches. The element is now identified by a data-testid attribute instead of an ID."
+      "reasoning": "The 'Add to cart' button exists in the DOM but its id attribute has changed or was removed. The button is still present and functional, identifiable via its data-testid attribute."
     },
     {
       "name": "submit class -> id",
@@ -43,7 +43,7 @@
       "correct": true,
       "engine": "claude",
       "adversarial": false,
-      "reasoning": "The submit button exists in the DOM but has been re-implemented with an ID attribute ('submitOrder') rather than the CSS class 'submit-btn'. The feature is intact but the selector has drifted."
+      "reasoning": "The submit button exists in the DOM but has been given an ID-based selector rather than a class-based one. The element is present and functional, just the CSS class '.submit-btn' no longer matches \u2014 the button now uses id='submitOrder' inst"
     },
     {
       "name": "email name -> id",
@@ -53,7 +53,7 @@
       "correct": true,
       "engine": "claude",
       "adversarial": false,
-      "reasoning": "The email input exists but uses an id attribute instead of a name attribute. The selector drifted from input[name=email] to input#email, but the element is still present and functional."
+      "reasoning": "The email input field exists on the page but uses an id attribute instead of a name attribute. The selector 'input[name=email]' failed because the element has id='email' rather than name='email'. The feature is working, just the locator dri"
     },
     {
       "name": "nav link renamed",
@@ -63,7 +63,7 @@
       "correct": true,
       "engine": "claude",
       "adversarial": false,
-      "reasoning": "The navigation link to Home exists in the DOM but its ID has changed from 'nav-home' to 'home-link'. The feature is intact, only the selector has drifted."
+      "reasoning": "The navigation home link exists and is functional, but its ID has changed from 'nav-home' to 'home-link'. The element is present in the DOM with the same purpose and text 'Home'."
     },
     {
       "name": "payment failed (no confirmation)",
@@ -73,7 +73,7 @@
       "correct": true,
       "engine": "claude",
       "adversarial": false,
-      "reasoning": "The test expected an 'Order confirmed' success message, but the page is displaying 'Payment failed. Please try again.' in a div.error element. This is not a selector drift issue \u2014 the payment flow itself failed and the product is returning "
+      "reasoning": "The test expected an 'Order confirmed' success message, but the page is displaying 'Payment failed. Please try again.' in a div.error element. This indicates the payment/order flow is actually failing, not a selector drift issue. There is n"
     },
     {
       "name": "checkout button gone (out of stock)",
@@ -83,7 +83,7 @@
       "correct": true,
       "engine": "claude",
       "adversarial": false,
-      "reasoning": "The checkout button (#checkout-btn) is absent from the page entirely. The only visible elements are an 'Out of stock' banner and a Home link, indicating the product is unavailable and the checkout flow is legitimately blocked. This is not a"
+      "reasoning": "The checkout button is missing from the page entirely. The only available elements are a banner indicating 'Out of stock' and a home link. This strongly suggests the product is out of stock and the checkout button has been intentionally rem"
     },
     {
       "name": "500 on dashboard",
@@ -93,7 +93,7 @@
       "correct": true,
       "engine": "claude",
       "adversarial": false,
-      "reasoning": "The page is showing a 500 Internal Server Error instead of the dashboard. This is not a selector drift issue \u2014 the application itself is broken and returning a server error, which is why the #dashboard element is not present in the DOM."
+      "reasoning": "The page is showing an Internal Server Error (500) instead of the dashboard. This is a server-side failure, not a selector drift issue. The dashboard element is absent because the application itself is broken."
     },
     {
       "name": "invalid credentials",
@@ -103,7 +103,7 @@
       "correct": true,
       "engine": "claude",
       "adversarial": false,
-      "reasoning": "The page is showing 'Invalid credentials' instead of 'Welcome back', indicating the login attempt failed. This is not a selector drift issue \u2014 the expected success message is absent and the application is returning an authentication error. "
+      "reasoning": "The page is showing 'Invalid credentials' instead of 'Welcome back', indicating a login failure. This is not a selector drift issue \u2014 the expected success message is absent because authentication failed. The product is not behaving correctl"
     },
     {
       "name": "transfer failed (insufficient funds)",
@@ -113,7 +113,7 @@
       "correct": true,
       "engine": "claude",
       "adversarial": false,
-      "reasoning": "The test expected a 'Transfer successful' message, but the page is actually displaying 'Insufficient funds' in an error div. This is not a selector drift issue \u2014 the expected success outcome did not occur. The application returned an error "
+      "reasoning": "The test expected a 'Transfer successful' message, but the application is displaying 'Insufficient funds' in a div.error element. This is not a selector drift issue \u2014 the feature itself is failing. The transfer operation did not complete su"
     },
     {
       "name": "search box name -> id",
@@ -123,7 +123,7 @@
       "correct": true,
       "engine": "claude",
       "adversarial": false,
-      "reasoning": "The search input field exists but the name attribute 'q' has changed. The input is now identified by id='search' rather than name='q', but the element is clearly the same search functionality."
+      "reasoning": "The search input element exists but its 'name' attribute has changed or was removed. The element is now identified by id='search' rather than name='q'. The functionality is intact as evidenced by the presence of the search input and its pla"
     },
     {
       "name": "menu button class -> testid",
@@ -133,7 +133,7 @@
       "correct": true,
       "engine": "claude",
       "adversarial": false,
-      "reasoning": "The hamburger menu button still exists in the UI but the class name '.hamburger' has changed. The same functional element is now identified by 'data-testid=menu-toggle' with aria-label 'Menu'."
+      "reasoning": "The hamburger menu button still exists in the UI but the CSS class '.hamburger' has been replaced with a data-testid attribute 'menu-toggle'. The feature is working but the selector has drifted."
     },
     {
       "name": "save returns validation error",
@@ -143,7 +143,7 @@
       "correct": true,
       "engine": "claude",
       "adversarial": false,
-      "reasoning": "The test expected to see a 'Saved' confirmation text after a save action, but instead the page is showing an error message 'Email is required'. This indicates the save operation failed due to a validation error \u2014 the product is not in a sta"
+      "reasoning": "The test expected a 'Saved' confirmation message, but instead the page is showing a validation error 'Email is required'. This indicates the save operation failed due to a missing required field (email), meaning the product is not in a save"
     },
     {
       "name": "[adversarial] checkout btn present but payment declined",
@@ -153,7 +153,7 @@
       "correct": true,
       "engine": "claude",
       "adversarial": true,
-      "reasoning": "While the button's ID has drifted from 'pay-now' to 'pay-now-v2' (suggesting a BRITTLE_SELECTOR), the presence of 'Payment declined \u2014 card error' in the DOM indicates an actual payment failure is occurring. The core feature (payment process"
+      "reasoning": "While the selector has drifted from #pay-now to #pay-now-v2, the page is showing a 'Payment declined \u2014 card error' message, indicating the payment flow itself is broken. The error is a product-level failure, not merely a selector mismatch. "
     },
     {
       "name": "[adversarial] submit renamed, unrelated promo banner",
@@ -173,7 +173,7 @@
       "correct": true,
       "engine": "claude",
       "adversarial": true,
-      "reasoning": "The product is out of stock, which is why the 'Add to cart' button is disabled. The selector drift is minor (id changed from 'add-to-cart' to 'add-to-cart-btn'), but the core issue is that the button is disabled and the item is out of stock"
+      "reasoning": "The product is out of stock, as indicated by the 'Out of stock' div and the disabled state of the add-to-cart button. The selector has drifted slightly (id changed from 'add-to-cart' to 'add-to-cart-btn'), but even with the correct selector"
     }
   ]
 }

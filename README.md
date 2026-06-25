@@ -23,14 +23,14 @@ spec ─▶ generate ─▶ run ─▶ pass ✅
 | **Adversarial benchmark: 0% false-negative, 16/16** | **Runs as a UiPath coded agent** |
 | ![Benchmark: 0% false-negative rate, 16/16 triage accuracy](submission/screenshots/05-benchmark-16of16.png) | ![UiPath coded agent in the repo](submission/screenshots/06-coded-agent-repo.png) |
 
-**Verified on the platform.** The published package ran as a **serverless Orchestrator job** (`Successful`), showing the agent's live timeline: self-heal the brittle locator, then refuse the real bug and file a defect.
+**Verified on the platform.** The published package ran as a **serverless Orchestrator job** (`Successful`), with the agent's live timeline showing it select → generate → run → triage → **refuse** the real bug. (The serverless run did not have Test Manager credentials injected, so the **defect-filing** step is shown from the **local** run that calls Test Manager v2 directly — see screenshots 03/04 and `orchestrator-job.json`. The on-platform run proves the agent executes live; the local run proves the Test Manager write path.)
 
 ![Orchestrator serverless job: Successful, with the agent's heal-and-refuse timeline](submission/screenshots/07-orchestrator-job.png)
 
 ## Why it's different: restraint, enforced in code
 Every self-healing tool optimizes for **heal coverage**. Autopilot for Testers, Testim, mabl, and Healenium all race to fix as many broken locators as possible. SelfHeal QA inverts the objective function: its novelty is knowing **when *not* to heal**. It withholds the heal when the failure is a genuine regression and turns that judgment into an auto-filed Test Manager defect, going straight at the biggest risk of autonomous QA: **silent regressions masked by over-eager healing.**
 
-Crucially, the restraint is **enforced in code, not just asked of the model.** The guardrail in [`src/heal.ts`](src/heal.ts) (and mirrored in [`uipath-agent/main.py`](uipath-agent/main.py)) refuses to apply a heal when model confidence is below a floor (`< 0.7`) **or** the page snapshot shows an error/alert state — because a real bug often masquerades as a drifted selector. A low-confidence or error-state case is never silently rewritten; it is escalated for human review. This invariant is unit-tested (`npm test`, see [`tests/heal.test.ts`](tests/heal.test.ts)).
+Crucially, the restraint is **enforced in code, not just asked of the model.** The triage *verdict* (`REAL_BUG` vs `BRITTLE_SELECTOR`) is live-model judgment, but the *gate that acts on it is deterministic code*: the guardrail in [`src/heal.ts`](src/heal.ts) (mirrored in [`uipath-agent/main.py`](uipath-agent/main.py)) refuses to apply a heal when model confidence is below a floor (`< 0.7`) **or** the page snapshot shows an error/alert state — because a real bug often masquerades as a drifted selector. A low-confidence or error-state case is never silently rewritten; it is escalated for human review. This invariant is unit-tested (`npm test`, see [`tests/heal.test.ts`](tests/heal.test.ts)).
 
 The pattern generalizes: **heal-vs-refuse restraint applies to any autonomous agent that mutates state on failure** — not just locator healing. It is a reusable principle (act when confident and safe; escalate otherwise), the same one behind the author's refund-triage agent.
 
