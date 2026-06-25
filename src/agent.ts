@@ -73,6 +73,11 @@ export async function runAgent(opts: AgentOptions): Promise<RunReport> {
       return { testName: test.name, url: test.url, finalStatus: "fail", attempts, heals, bugs, timeline };
     }
 
+    if (outcome.heldBack) {
+      push(`🚧 Restraint: the guardrail withheld a low-confidence/error-state heal. No silent selector rewrite — flagged for human review.`);
+      return { testName: test.name, url: test.url, finalStatus: "fail", attempts, heals, bugs, timeline };
+    }
+
     push(`🤷 Inconclusive diagnosis — stopping for human review.`);
     return { testName: test.name, url: test.url, finalStatus: "fail", attempts, heals, bugs, timeline };
   }

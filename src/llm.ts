@@ -166,7 +166,7 @@ function reqEnv(name: string): string {
 export function createLLM(): LLM {
   loadEnv();
   const provider = (process.env.LLM_PROVIDER || "mock").toLowerCase();
-  if (provider === "anthropic") return new AnthropicLLM(reqEnv("ANTHROPIC_API_KEY"), process.env.ANTHROPIC_MODEL || "claude-opus-4-8");
+  if (provider === "anthropic") return new AnthropicLLM(reqEnv("ANTHROPIC_API_KEY"), process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6");
   if (provider === "openai") return new OpenAILLM(reqEnv("OPENAI_API_KEY"), process.env.OPENAI_MODEL || "gpt-4o");
   return new MockLLM();
 }

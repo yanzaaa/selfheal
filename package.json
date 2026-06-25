@@ -8,6 +8,7 @@
     "demo": "tsx src/cli.ts demo",
     "run": "tsx src/cli.ts run",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "pw:install": "playwright install chromium"
   },
   "dependencies": {
@@ -16,6 +17,7 @@
   "devDependencies": {
     "@types/node": "^22.10.0",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^3.2.4"
   }
 }

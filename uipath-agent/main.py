@@ -162,8 +162,38 @@ def run_test(test: dict, inject_bug: bool):
     return {"status": "pass"}
 
 
+# Substrings in the page snapshot that signal a real error/regression state — the restraint
+# guardrail refuses to silently heal over these even on a confident BRITTLE_SELECTOR call.
+ERROR_SNAPSHOT_SIGNALS = ("error", "alert", "role=alert", "declined", "denied", "failure", "exception")
+
+
+def _snapshot_looks_like_error(snapshot: str) -> bool:
+    s = (snapshot or "").lower()
+    return any(sig in s for sig in ERROR_SNAPSHOT_SIGNALS)
+
+
+def _heuristic_triage(failure: dict) -> dict:
+    """Deterministic triage used when no API key is present (or the live call fails)."""
+    fsel = failure.get("failedSelector")
+    snapshot = failure.get("snapshot", "")
+    if fsel == "#login-btn" and "sign-in-btn" in snapshot:
+        return {
+            "verdict": "BRITTLE_SELECTOR",
+            "confidence": 0.92,
+            "reasoning": "#login-btn no longer exists; equivalent submit control #sign-in-btn is present. Renamed locator, not a defect.",
+            "suggestedSelector": "#sign-in-btn",
+        }
+    return {
+        "verdict": "REAL_BUG",
+        "confidence": 0.6,
+        "reasoning": "Expected state is genuinely absent with no equivalent control — likely a product defect.",
+    }
+
+
 def triage(failure: dict) -> dict:
-    """Decide REAL_BUG vs BRITTLE_SELECTOR — via Claude if a key is present, else heuristic."""
+    """Decide REAL_BUG vs BRITTLE_SELECTOR via Claude when a key is present, else a deterministic
+    heuristic. Always stamps 'engine' ('claude' | 'deterministic-fallback') so a live decision is
+    never silently mistaken for the fallback — and a benchmark can refuse to count fallback runs."""
     fsel = failure.get("failedSelector")
     snapshot = failure.get("snapshot", "")
     key = os.environ.get("ANTHROPIC_API_KEY")
@@ -192,23 +222,20 @@ def triage(failure: dict) -> dict:
             )
             text = j["content"][0]["text"] if isinstance(j, dict) else ""
             start, end = text.find("{"), text.rfind("}")
-            if start != -1 and end != -1:
-                return json.loads(text[start : end + 1])
-        except Exception:
-            pass
-    # Heuristic fallback (deterministic)
-    if fsel == "#login-btn" and "sign-in-btn" in snapshot:
-        return {
-            "verdict": "BRITTLE_SELECTOR",
-            "confidence": 0.92,
-            "reasoning": "#login-btn no longer exists; equivalent submit control #sign-in-btn is present. Renamed locator, not a defect.",
-            "suggestedSelector": "#sign-in-btn",
-        }
-    return {
-        "verdict": "REAL_BUG",
-        "confidence": 0.6,
-        "reasoning": "Expected state is genuinely absent with no equivalent control — likely a product defect.",
-    }
+            if start == -1 or end == -1:
+                raise ValueError(f"no JSON object in Claude response (status {status})")
+            d = json.loads(text[start : end + 1])
+            d["engine"] = "claude"
+            return d
+        except Exception as e:
+            # Do NOT silently pretend this was a live decision — record the failure and fall back.
+            d = _heuristic_triage(failure)
+            d["engine"] = "deterministic-fallback"
+            d["engine_note"] = f"live Claude triage failed, used deterministic fallback: {str(e)[:120]}"
+            return d
+    d = _heuristic_triage(failure)
+    d["engine"] = "deterministic-fallback"
+    return d
 
 
 # --------------------------------------------------------------------------- #
@@ -277,6 +304,7 @@ class SelfHealOut:
 def main(input: SelfHealIn) -> SelfHealOut:
     timeline: list[str] = []
     heals: list[dict] = []
+    flagged: list[dict] = []  # heals the restraint guardrail withheld for human review
     bugs: list[dict] = []
 
     selection_summary = None
@@ -304,15 +332,25 @@ def main(input: SelfHealIn) -> SelfHealOut:
             break
         d = triage(f)
         conf = float(d.get("confidence", 0.0))
-        timeline.append(f"Triage: {d['verdict']} ({int(conf * 100)}%) — {d.get('reasoning', '')[:80]}")
+        timeline.append(f"Triage [{d.get('engine', '?')}]: {d['verdict']} ({int(conf * 100)}%) — {d.get('reasoning', '')[:80]}")
+        if d.get("engine_note"):
+            timeline.append(f"NOTE: {d['engine_note']}")
         if d["verdict"] == "BRITTLE_SELECTOR" and d.get("suggestedSelector"):
             step = next(s for s in test["steps"] if s["id"] == f["step"]["id"])
-            low = conf < 0.7  # low-confidence heals are applied but flagged for human review
-            heals.append({"from": step.get("selector"), "to": d["suggestedSelector"], "confidence": conf, "flagged_for_review": low})
-            timeline.append(
-                f"Self-healed: {step.get('selector')} -> {d['suggestedSelector']}"
-                + (" [LOW CONFIDENCE — flagged for human review]" if low else "")
-            )
+            # RESTRAINT GUARDRAIL (enforced in code): never silently rewrite a locator on a shaky
+            # call. Below the confidence floor, OR when the page shows an error/alert state (a real
+            # regression often masquerades as a drifted selector), withhold the heal and escalate.
+            low = conf < 0.7
+            error_state = _snapshot_looks_like_error(f.get("snapshot", ""))
+            if low or error_state:
+                why = "confidence below 70% floor" if low else "page is in an error/alert state"
+                flagged.append({"from": step.get("selector"), "to": d["suggestedSelector"], "confidence": conf, "why": why})
+                timeline.append(
+                    f"RESTRAINT: heal WITHHELD ({why}) — no silent rewrite of {step.get('selector')}; escalated for human review."
+                )
+                break
+            heals.append({"from": step.get("selector"), "to": d["suggestedSelector"], "confidence": conf})
+            timeline.append(f"Self-healed: {step.get('selector')} -> {d['suggestedSelector']}")
             step["selector"] = d["suggestedSelector"]
             continue
         bugs.append({"step": f["step"]["id"], "reasoning": d.get("reasoning", ""), "confidence": conf})
@@ -324,17 +362,25 @@ def main(input: SelfHealIn) -> SelfHealOut:
     if os.environ.get("UIPATH_REPORT", "1") == "1":
         try:
             pid = _project_id()
-            heal_txt = ", ".join(f"{h['from']}->{h['to']} ({int(h['confidence'] * 100)}%{', FLAGGED for review' if h.get('flagged_for_review') else ''})" for h in heals)
+            heal_txt = ", ".join(f"{h['from']}->{h['to']} ({int(h['confidence'] * 100)}%)" for h in heals)
+            flagged_txt = "; ".join(f"{h['from']} ({int(h['confidence'] * 100)}%, {h['why']})" for h in flagged)
             bug_txt = "; ".join(f"{b['reasoning']} ({int(b['confidence'] * 100)}% confidence)" for b in bugs)
             parts = [f"Authored by SelfHeal QA coded agent from {input.url}."]
             if selection_summary:
                 parts.append(f"Risk-based selection: {selection_summary}.")
             if heal_txt:
                 parts.append(f"Self-healed brittle locators: {heal_txt}.")
+            if flagged_txt:
+                parts.append(f"Heals WITHHELD by the restraint guardrail (escalated to a human, not auto-applied): {flagged_txt}.")
             if bug_txt:
                 parts.append(f"REAL BUG — refused to heal (blind self-healing would have masked this regression): {bug_txt}")
             desc = " ".join(parts)
-            outcome = "REAL BUG -> defect filed" if bugs else ("self-healed -> passed" if heals else final)
+            outcome = (
+                "REAL BUG -> defect filed" if bugs
+                else "heal withheld -> human review" if flagged
+                else "self-healed -> passed" if heals
+                else final
+            )
             run_name = f"{test['name']} - {outcome}"  # self-documenting name so the Execution list reads like a log
             tc = _tm("POST", f"/api/v2/{pid}/testcases", {"name": run_name, "description": desc, "projectId": pid})
             tcid = tc["id"]
@@ -355,7 +401,7 @@ def main(input: SelfHealIn) -> SelfHealOut:
         status=final,
         runs=attempts,
         heals=len(heals),
-        flagged_heals=sum(1 for h in heals if h.get("flagged_for_review")),
+        flagged_heals=len(flagged),
         bugs=len(bugs),
         execution_id=execution_id,
         defect_id=defect_id,

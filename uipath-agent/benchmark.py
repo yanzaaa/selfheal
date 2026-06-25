@@ -4,7 +4,13 @@ Runs the REAL_BUG vs BRITTLE_SELECTOR triage on labeled cases (a mix of
 cosmetic locator drift and genuine product regressions) and reports:
   - accuracy, and
   - the SAFETY-critical false-heal rate: real bugs wrongly classified as
-    brittle (i.e. silently healed away). Industry credibility bar is <5%.
+    brittle (i.e. silently healed away). A single silent false-heal ships a
+    real regression, so the only acceptable target here is zero.
+
+This is a small, author-curated set (n=16, weighted toward adversarial
+look-alikes), not a statistical guarantee. The transcript records whether the
+verdicts came from the live model or the deterministic fallback, and refuses to
+present a fallback run as a valid live benchmark.
 
 Run: .venv/bin/python benchmark.py   (uses real Claude triage if ANTHROPIC_API_KEY is set)
 """
@@ -96,6 +102,7 @@ def run() -> None:
             "verdict": verdict,
             "confidence": round(float(d.get("confidence", 0.0)), 3),
             "correct": bool(ok),
+            "engine": d.get("engine", "?"),
             "adversarial": c["name"].startswith("[adversarial]"),
             "reasoning": (d.get("reasoning") or "")[:240],
         })
@@ -104,14 +111,28 @@ def run() -> None:
     adversarial = sum(1 for c in CASES if c["name"].startswith("[adversarial]"))
     fhr = (false_heals / real_total * 100) if real_total else 0
 
-    # Write a committed transcript so the 16/16 / 0%-false-negative claim is
-    # reproducible evidence in the repo, not just an assertion in the demo.
-    live = bool(os.environ.get("ANTHROPIC_API_KEY"))
+    # Determine the engine HONESTLY from each case, not just from key-presence: if any case fell
+    # back to the deterministic heuristic (e.g. a live call failed), this is NOT a valid live run.
+    key_present = bool(os.environ.get("ANTHROPIC_API_KEY"))
+    used_fallback = any(r["engine"] == "deterministic-fallback" for r in records)
+    is_live = key_present and not used_fallback and n > 0
+    engine_label = "live-claude" if is_live else "deterministic-fallback"
+    caveat = None if is_live else (
+        "NOT A VALID LIVE RESULT: one or more cases ran on the deterministic heuristic fallback "
+        "(no ANTHROPIC_API_KEY, or a live call failed). These verdicts are heuristic, not live-model "
+        "decisions — do not cite this file as a model benchmark."
+    )
+
+    # Write a committed transcript so the result is reproducible evidence in the repo, not just an
+    # assertion in the demo — and so a fallback run can never masquerade as a clean live benchmark.
     transcript = {
         "generated_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
-        "triage_engine": "live-claude" if live else "deterministic-fallback",
+        "triage_engine": engine_label,
+        "valid_live_result": is_live,
+        "caveat": caveat,
+        "note": "Small, author-curated set; weighted toward adversarial look-alikes. Not a statistical guarantee.",
         "provider": os.environ.get("LLM_PROVIDER", "anthropic"),
-        "model": os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6") if live else None,
+        "model": os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6") if is_live else None,
         "summary": {
             "cases": n,
             "accuracy_pct": round(correct / n * 100, 1),
@@ -126,9 +147,12 @@ def run() -> None:
     out.write_text(json.dumps(transcript, indent=2) + "\n")
 
     print(f"\nSAFETY (the number that matters): {false_heals}/{real_total} real bugs healed-away = {fhr:.0f}% FALSE-NEGATIVE rate")
-    print(f"  {real_total} real-regression cases, including {adversarial} adversarial look-alikes built to fool the triage. Industry bar: <5%.")
+    print(f"  {real_total} real-regression cases, incl. {adversarial} adversarial look-alikes built to fool the triage. A single false-heal ships a real regression — target is zero.")
+    print(f"  Set size is small and author-curated (n={n}); this is evidence, not a statistical guarantee.")
     print(f"Triage accuracy: {correct}/{n} = {correct / n * 100:.0f}% across {n} labeled cases")
-    print(f"Engine: {transcript['triage_engine']}" + (f" ({transcript['model']})" if live else " (no ANTHROPIC_API_KEY set)"))
+    print(f"Engine: {engine_label}" + (f" ({transcript['model']})" if is_live else ""))
+    if caveat:
+        print(f"  ⚠ {caveat}")
     print("-" * 64)
     for res, name, exp, got in rows:
         print(f"  [{res}] {name}: expected {exp}, got {got}")
