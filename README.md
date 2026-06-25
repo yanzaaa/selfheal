@@ -47,6 +47,8 @@ cd uipath-agent
 ```
 
 ## UiPath components used
+**Agent Type: Coded Agent** (Python, built and run with the `uipath` SDK/CLI — not low-code).
+
 - **Coded Agents** (Automation Cloud / Orchestrator): orchestration and agent logic on the platform
 - **Test Manager** v2: test cases, test sets, executions, test-case logs, **defects**
 - **Identity**: external-application client-credentials auth
