@@ -25,12 +25,12 @@ cd ~/Desktop/selfheal-qa/uipath-agent
 Sample inputs already exist in `submission/`. The agent input is `{ url, spec, inject_bug? }`.
 - **From the CLI (fastest):**
   ```bash
-  .venv/bin/uipath invoke main --file ../submission/sample-run-bug.json
-  .venv/bin/uipath invoke main --file ../submission/sample-run-clean.json
+  .venv/bin/uipath invoke main --file ../submission/input-bug.json
+  .venv/bin/uipath invoke main --file ../submission/input-clean.json
   ```
-- **Or in the UI:** Orchestrator → Agents (or Processes) → SelfHeal QA → Start, paste a sample input from `submission/sample-run-bug.json`.
+- **Or in the UI:** Orchestrator → Agents (or Processes) → SelfHeal QA → Start, paste a sample input from `submission/input-bug.json`.
 
-The **money moment** to capture: the `sample-run-bug.json` case is a real defect — the agent **refuses to "heal" it** and files it as a defect (it doesn't paper over a real regression). The `clean` case self-heals a brittle locator and passes.
+The **money moment** to capture: the `input-bug.json` case is a real defect — the agent **refuses to "heal" it** and files it as a defect (it doesn't paper over a real regression). The `clean` case self-heals a brittle locator and passes.
 
 ## 4. Capture the proof screenshots (for Devpost)
 - The Agent/Process run in Orchestrator (job succeeded, with the agent's decision).
