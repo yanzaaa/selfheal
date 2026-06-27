@@ -1,6 +1,6 @@
 [project]
 name = "selfheal-qa-agent"
-version = "0.2.0"
+version = "0.2.2"
 description = "SelfHeal QA — AI test agent that self-heals brittle locators and files real regressions as defects in UiPath Test Manager"
 authors = [{ name = "Anthony Yanza" }]
 dependencies = [

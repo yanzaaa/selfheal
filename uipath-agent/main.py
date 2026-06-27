@@ -16,6 +16,7 @@ browser for the live demo.
 
 import json
 import os
+import re
 import time
 import urllib.error
 import urllib.parse
@@ -41,9 +42,18 @@ def _load_env() -> None:
 
 
 _load_env()
-BASE = os.environ.get("UIPATH_BASE_URL", "https://cloud.uipath.com")
-ORG = os.environ.get("UIPATH_ACCOUNT", "")
-TENANT = os.environ.get("UIPATH_TENANT", "")
+# On the UiPath serverless runtime the platform injects UIPATH_URL
+# (https://host/<org>/<tenant>) and UIPATH_ACCESS_TOKEN. Derive org/tenant from it
+# so the agent reports to the SAME tenant it runs on; fall back to explicit env for local.
+def _runtime_ctx():
+    m = re.match(r"(https?://[^/]+)/([^/]+)/([^/?#]+)", os.environ.get("UIPATH_URL", ""))
+    return m.groups() if m else (None, None, None)
+
+
+_RT_BASE, _RT_ORG, _RT_TENANT = _runtime_ctx()
+BASE = _RT_BASE or os.environ.get("UIPATH_BASE_URL", "https://cloud.uipath.com")
+ORG = _RT_ORG or os.environ.get("UIPATH_ACCOUNT", "")
+TENANT = _RT_TENANT or os.environ.get("UIPATH_TENANT", "")
 PROJECT = os.environ.get("UIPATH_PROJECT", "")
 SCOPE = os.environ.get(
     "UIPATH_SCOPE",
@@ -73,8 +83,15 @@ _token = {"value": None, "exp": 0.0}
 
 
 def _get_token() -> str:
+    # On-platform: use the runtime-injected token (auth as the job itself — no
+    # external app or client secret needed). Local: fall back to client-credentials.
+    runtime_tok = os.environ.get("UIPATH_ACCESS_TOKEN")
+    if runtime_tok:
+        return runtime_tok
     if _token["value"] and time.time() < _token["exp"]:
         return _token["value"]
+    if not os.environ.get("UIPATH_CLIENT_ID"):
+        raise RuntimeError("no UIPATH_ACCESS_TOKEN and no UIPATH_CLIENT_ID set")
     form = urllib.parse.urlencode(
         {
             "grant_type": "client_credentials",
@@ -399,7 +416,14 @@ def main(input: SelfHealIn) -> SelfHealOut:
                 defect_id = (df or {}).get("id")
                 timeline.append(f"Filed defect {defect_id} — blind self-healing would have masked this")
         except Exception as e:  # never crash the agent on reporting
-            timeline.append(f"Test Manager reporting skipped: {str(e)[:160]}")
+            msg = str(e)
+            if "not found" in msg or "license" in msg.lower() or " 403" in msg or " 402" in msg:
+                timeline.append(
+                    "Test Manager reporting unavailable on this tenant (no Test Manager license/project) — "
+                    "the full self-heal vs refuse-and-flag decision is recorded in this job's output above."
+                )
+            else:
+                timeline.append(f"Test Manager reporting skipped: {msg[:160]}")
 
     return SelfHealOut(
         status=final,
