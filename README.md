@@ -47,12 +47,14 @@ cd uipath-agent
 ```
 
 ## UiPath components used
-**Agent Type: Coded Agent** (Python, built and run with the `uipath` SDK/CLI — not low-code).
+**Agent Type: Coded Agent** — Python, scaffolded, run, and published with the `uipath` SDK/CLI. This is a **Coded Agent**, not a low-code agent, and not a mix.
 
-- **Coded Agents** (Automation Cloud / Orchestrator): orchestration and agent logic on the platform
-- **Test Manager** v2: test cases, test sets, executions, test-case logs, **defects**
-- **Identity**: external-application client-credentials auth
-- **UiPath for Coding Agents**: built entirely with **Claude Code**
+- **Coded Agents** — the orchestration and agent logic (`uipath-agent/`), scaffolded/run/published with the `uipath` CLI + SDK
+- **Orchestrator** — the agent is published to the tenant package feed and executed as a **serverless job** (`Successful`, see `submission/orchestrator-job.json`)
+- **Test Manager v2** — test cases, test sets, executions, test-case logs, and auto-filed **defects**
+- **Identity** — external-application client-credentials auth for the platform API calls
+- **API Workflows** — the agent calls the Test Manager v2 and Identity **REST APIs** directly from code
+- **UiPath for Coding Agents** — built end to end with **Claude Code**
 
 ## Live browser demo (companion Playwright executor)
 A TypeScript executor drives a real Chromium so you can watch the heal happen on an actual page:
@@ -69,6 +71,41 @@ Add `?bug=1` to the URL to see the agent correctly **file a defect** instead of 
 **Verified on-platform run:** the published package was executed as a job on Orchestrator's **Default Serverless** runtime and completed **`Successful`** in 10.2s (job `d5d3c7f6-bd39-4417-ad2c-aa9bc78e7b28`), captured in [`submission/orchestrator-job.json`](submission/orchestrator-job.json).
 
 Key-free demo (no API keys, mock execution): `npm run demo`.
+
+## Setup & run (for judges)
+**Prerequisites:** Node 20+ and npm. (Python 3.11+ is only needed for the optional on-platform coded-agent run; the demo and tests below need no keys and no Python.)
+
+**1 — Clone & install**
+```bash
+git clone https://github.com/yanzaaa/selfheal && cd selfheal
+npm install
+```
+
+**2 — Fastest check: key-free demo (no API keys, ~10s).** Runs the full loop on seeded fixtures — a brittle locator is healed and the test passes; a real bug is **refused** and a defect is filed:
+```bash
+npm run demo
+```
+
+**3 — The guardrail tests** (pins the restraint invariants: confident heal applied; low-confidence or error-state heal withheld; real bug filed):
+```bash
+npm test
+```
+
+**4 — Live browser demo (optional):** watch the heal happen on a real Chromium page:
+```bash
+npm run pw:install
+npm run run -- --url "file://$PWD/demo/buggy-app/index.html" \
+  --spec "A returning user logs in and sees Welcome back" --headed
+# add ?bug=1 to the URL to watch it file a defect instead of healing
+```
+
+**5 — On-platform UiPath Coded Agent (optional; needs a UiPath tenant):**
+```bash
+cp .env.example .env        # set UiPath Identity client creds (+ ANTHROPIC_API_KEY for live triage)
+cd uipath-agent
+.venv/bin/uipath run main '{"url":"https://demo.local/login","spec":"login and see Welcome back","inject_bug":true}'
+```
+Runs the published Coded Agent end to end: `select → generate → run → triage → heal / file-defect → report`. The same package executed on Orchestrator's Default Serverless runtime (`Successful`). Full deploy steps: [`submission/UIPATH-DEPLOY.md`](submission/UIPATH-DEPLOY.md).
 
 ## How it works
 | Piece | Where | Job |
